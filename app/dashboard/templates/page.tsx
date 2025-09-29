@@ -149,7 +149,7 @@ export default function TemplatesPage() {
           <div className="max-w-2xl">
             <h2 className="text-2xl font-bold mb-2">Need a Custom Template?</h2>
             <p className="text-blue-100 mb-6">
-              Can't find the perfect template? Our AI can adapt to any style or format you need. 
+              {"Can't find the perfect template? Our AI can adapt to any style or format you need."} 
               Just describe your requirements in the topic field.
             </p>
             <Link href="/dashboard/create">

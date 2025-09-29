@@ -326,7 +326,7 @@
 
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -339,6 +339,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import  blogService from '@/lib/blog-service'
 import { useAuth } from '@/hooks/use-auth'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+
 
 
 interface BlogGeneratorFormProps {
@@ -360,6 +361,15 @@ const languages = [
 ]
 
 export function BlogGeneratorForm({ onBlogGenerated }: BlogGeneratorFormProps) {
+   return (
+    <Suspense fallback={<div>Loading form...</div>}>
+      <InnerForm onBlogGenerated={onBlogGenerated} />
+    </Suspense>
+  )
+}
+
+// ✅ keep logic here (still one file, just a small inner component)
+function InnerForm({ onBlogGenerated }: BlogGeneratorFormProps) {
   const [isGenerating, setIsGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
@@ -375,6 +385,7 @@ export function BlogGeneratorForm({ onBlogGenerated }: BlogGeneratorFormProps) {
   const { user, loading } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
+ 
 
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'
 
@@ -388,8 +399,8 @@ export function BlogGeneratorForm({ onBlogGenerated }: BlogGeneratorFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    
+
+     if (isGenerating) return    
 if (loading) return <p>Loading...</p>
     // if (!user?.id) {
     //   toast.error('Please log in to generate blogs')
@@ -432,26 +443,12 @@ if (loading) return <p>Loading...</p>
         })
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to generate blog from backend')
-      }
+      // if (!response.ok) {
+      //   throw new Error('loading')
+      // }
 
       const generatedBlog = await response.json()
       console.log('Generated +Saved blog:', generatedBlog)
-
-      // Save blog to Supabase
-      // const { data: blog, error } = await blogService.createBlog({
-      //   user_id: user.id,
-      //   title: generatedBlog.title,
-      //   content: generatedBlog.content,
-      //   word_count: generatedBlog.word_count,
-      //   seo_score: generatedBlog.seo_score,
-      //   status: 'draft'
-      // })
-
-      // if (error) {
-      //   throw new Error('Failed to save blog: ' + error.message)
-      // }
 
       toast.success('Blog generated successfully!')
 
@@ -460,18 +457,6 @@ if (loading) return <p>Loading...</p>
       } else {
         router.push(`/dashboard/blogs/${generatedBlog.id}`)
       }
-//       if (error || !blog) {
-//   console.error("Failed to generate blog:", error);
-//   return;
-// }
-
-// if (onBlogGenerated) {
-//   onBlogGenerated(blog);
-// } else {
-//   router.push(`/dashboard/blogs/${blog.id}`);
-// }
-
-
 
     } catch (error) {
       console.error('Error generating blog:', error)
@@ -654,7 +639,7 @@ if (loading) return <p>Loading...</p>
           
           {isGenerating && (
             <div className="text-center text-sm text-gray-500">
-              <p>This may take 30-60 seconds. Please don't close this page.</p>
+              <p>{"This may take 30-60 seconds. Please don't close this page."}</p>
             </div>
           )}
         </form>

@@ -368,7 +368,7 @@
 
 
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
@@ -379,8 +379,8 @@ import requests
 import re
 from dotenv import load_dotenv
 from pathlib import Path
-# from supabase import create_client, Client
-from supabase import create_client
+from supabase import create_client, Client
+# from supabase import create_client
 from datetime import datetime
 
 # Load .env
@@ -407,7 +407,7 @@ if not openai.api_key:
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
 
-supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
 # --- Pydantic models ---
 class BlogRequest(BaseModel):
@@ -418,14 +418,19 @@ class BlogRequest(BaseModel):
     keywords: Optional[List[str]] = []
     tone: str = "professional"
     word_count: int = 800
+    user_id: Optional[str] = None
 
 class BlogResponse(BaseModel):
+    id: Optional[str] = None
     title: str
     content: str
     word_count: int
     seo_score: int
     meta_description: str
     keywords_used: List[str]
+    status: Optional[str] = None
+    user_id: Optional[str] = None
+    created_at: Optional[str] = None
 
 class ScrapeRequest(BaseModel):
     url: str
@@ -629,29 +634,71 @@ async def generate_blog(request: BlogRequest):
             "language": request.language,
             "company_name": request.company_name,
             "status": "published",
-            "user_id": getattr(request, "user_id", None),
+            "user_id": request.user_id,
             "created_at": datetime.utcnow().isoformat()
         }
 
-        result = supabase.table("blogs").insert(blog_data).execute()
-        # if result.error:
-        #     raise HTTPException(status_code=500, detail=f"Supabase insert error: {result.error}")
-        if not result.data or len(result.data) == 0:
+        insert_res = supabase.table("blogs").insert(blog_data, returning="representation").execute()
+        if insert_res.error:
+            raise HTTPException(status_code=500, detail=f"Supabase insert error: {insert_res.error}")
+
+        if not insert_res.data or len(insert_res.data) == 0:
            raise HTTPException(status_code=500, detail="Supabase insert failed: empty response")
         
-        result = supabase.table("blogs").insert(blog_data).select("*").execute()
-        
+        # result = supabase.table("blogs").insert(blog_data).select("*").execute()
+
+        inserted_row= insert_res.data[0]
+
         return BlogResponse(
+            id=inserted_row.get("id"),
             title=title,
             content=content,
             word_count=word_count,
             seo_score=round(seo_score),
             meta_description=meta_description,
-            keywords_used=request.keywords or []
+            keywords_used=request.keywords or [],
+            status=inserted_row.get("status"),
+            user_id=inserted_row.get("user_id"),
+            created_at=inserted_row.get("created_at")
+            
         )
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating blog: {str(e)}")
+    
+@app.get("/blogs/{blog_id}", response_model=BlogResponse)
+async def get_blog(blog_id: str, user_id: Optional[str] = Query(None, description="optional user_id to scope the query")):
+    try:
+        query = supabase.table("blogs").select("*")
+        # if user_id provided, scope by it
+        if user_id:
+            query = query.eq("user_id", user_id)
+        res = query.eq("id", blog_id).maybe_single().execute()
+
+        if res.error:
+            raise HTTPException(status_code=500, detail=f"Supabase error: {res.error}")
+
+        if not res.data:
+            raise HTTPException(status_code=404, detail="Blog not found")
+
+        row = res.data
+        return BlogResponse(
+            id=row.get("id"),
+            title=row.get("title") or "",
+            content=row.get("content") or "",
+            word_count=row.get("word_count") or 0,
+            seo_score=row.get("seo_score") or 0,
+            meta_description=row.get("meta_description") or "",
+            keywords_used=row.get("keywords_used") or [],
+            status=row.get("status"),
+            user_id=row.get("user_id"),
+            created_at=row.get("created_at")
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching blog: {str(e)}")
+
 
 # --- Scraper endpoint ---
 @app.post("/scrape-content", response_model=ScrapeResponse)

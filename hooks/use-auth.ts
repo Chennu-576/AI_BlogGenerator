@@ -10,8 +10,8 @@ export function useAuth() {
 
   useEffect(() => {
     // Get initial user
-    authService.getCurrentUser().then(({ data }) => {
-      setUser(data.user)
+    authService.getCurrentUser().then(({ user }) => {
+      setUser(user ?? null)
       setLoading(false)
     })
 
