@@ -236,6 +236,7 @@ import { authService } from '@/lib/auth'
 import { toast } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 import { Loader2, Mail } from 'lucide-react'
+import { useAuth } from '@/hooks/use-auth'
 
 export function AuthForm() {
   const [isLoading, setIsLoading] = useState(false)
@@ -251,6 +252,8 @@ export function AuthForm() {
   const [isResetMode, setIsResetMode] = useState(false)
 
   const router = useRouter()
+  const { refreshUser } = useAuth() // ✅ get refreshUser from useAuth
+
 
   // --- Sign In ---
   const handleSignIn = async (e: React.FormEvent) => {
@@ -261,9 +264,13 @@ export function AuthForm() {
       if (error) {
         toast.error(error.message)
       } else if (user) {
+         await refreshUser() // ✅ refresh user state
         toast.success(`Welcome back, ${user.user_metadata?.username || 'User'}!`)
         router.push('/dashboard')
       }
+      setTimeout(() => {
+        router.push('/dashboard')
+      }, 100)
     } catch {
       toast.error('An unexpected error occurred')
     } finally {
@@ -283,10 +290,14 @@ export function AuthForm() {
       )
       if (error) {
         toast.error(error.message)
-      } else {
+      } else if (user) {
+        await refreshUser() // ✅ refresh user state
         toast.success('Account created! Please check your email for verification.')
-        router.push('/dashboard')
+        
       }
+      setTimeout(() => {
+        router.push('/dashboard')
+      }, 100)
     } catch {
       toast.error('An unexpected error occurred')
     } finally {

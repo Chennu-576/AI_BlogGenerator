@@ -33,21 +33,47 @@ export default function BlogViewPage() {
       
       try {
         const { data, error } = await blogService.getBlog(blogId, user.id)
-        if (data && !error) {
-          setBlog(data)
-        } else if (error) {
-          console.error('Error loading blog:', error)
-          toast.error('Blog not found')
-          router.push('/dashboard/blogs')
-        }
-      } catch (error) {
-        console.error('Exception loading blog:', error)
+        if (error) {
+        // Real Supabase error
+        console.error('Error loading blog:', error)
         toast.error('Failed to load blog')
         router.push('/dashboard/blogs')
-      } finally {
-        setLoading(false)
+        return
       }
+
+      if (!data) {
+        // Blog not found (normal case)
+        toast.error('Blog not found')
+        router.push('/dashboard/blogs')
+        return
+      }
+
+      // Blog found → set state
+      setBlog(data)
+    } catch (error) {
+      // Unexpected JS error
+      console.error('Exception loading blog:', error)
+      toast.error('Failed to load blog')
+      router.push('/dashboard/blogs')
+    } finally {
+      setLoading(false)
     }
+  }
+    //     if (data && !error) {
+    //       setBlog(data)
+    //     } else if (error) {
+    //       console.error('Error loading blog:', error)
+    //       toast.error('Blog not found')
+    //       router.push('/dashboard/blogs')
+    //     }
+    //   } catch (error) {
+    //     console.error('Exception loading blog:', error)
+    //     toast.error('Failed to load blog')
+    //     router.push('/dashboard/blogs')
+    //   } finally {
+    //     setLoading(false)
+    //   }
+    // }
 
     loadBlog()
   }, [user, blogId, router])

@@ -226,7 +226,7 @@ const blogService = {
       .select('*')
       .eq('id', id)
       .eq('user_id', userId)
-      .single()
+      .maybeSingle()
 
     if (error) {
       console.error('[blogService.getBlog] Error:', error)

@@ -379,7 +379,10 @@ function InnerForm({ onBlogGenerated }: BlogGeneratorFormProps) {
     language: 'English',
     keywords: '',
     tone: 'professional',
-    wordCount: '800'
+    wordCount: '800',
+    sampleBlog: '',
+    companyUrl: ''
+  
   })
   
   const { user, loading } = useAuth()
@@ -438,8 +441,9 @@ if (loading) return <p>Loading...</p>
         : [],
           tone: formData.tone,
           user_id: user?.id || null, 
-          word_count: parseInt(formData.wordCount)
-          
+          word_count: parseInt(formData.wordCount),
+          sample_blog: formData.sampleBlog || null,   // 🆕 used only in backend
+          company_url: formData.companyUrl || null   // 🆕 used only in backend
         })
       })
 
@@ -511,6 +515,31 @@ if (loading) return <p>Loading...</p>
               />
             </div>
           </div>
+          {/* 🆕 Sample Blog */}
+          <div className="space-y-2">
+            <Label htmlFor="sampleBlog">Sample Blog (optional)</Label>
+            <textarea
+              id="sampleBlog"
+              placeholder="Paste a sample blog to guide style and tone..."
+              value={formData.sampleBlog}
+              onChange={(e) => setFormData({ ...formData, sampleBlog: e.target.value })}
+              disabled={isGenerating}
+              className="border rounded p-2 w-full h-32"
+            />
+          </div>
+
+          {/* 🆕 Company URL */}
+          <div className="space-y-2">
+            <Label htmlFor="companyUrl">Competitor / Company Blog URL (optional)</Label>
+            <Input
+              id="companyUrl"
+              placeholder="https://example.com/blog/article"
+              value={formData.companyUrl}
+              onChange={(e) => setFormData({ ...formData, companyUrl: e.target.value })}
+              disabled={isGenerating}
+            />
+          </div>
+
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
