@@ -470,7 +470,7 @@ const navigation = [
   { name: 'Recent Blogs', href: '/dashboard/blogs', icon: FileText },
   { name: 'Create Blog', href: '/dashboard/create', icon: Plus },
   { name: 'Templates', href: '/dashboard/templates', icon: Layout },
-  { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
+  // { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ]
 

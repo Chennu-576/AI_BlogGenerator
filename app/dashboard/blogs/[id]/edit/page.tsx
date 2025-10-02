@@ -51,12 +51,12 @@ export default function BlogEditPage() {
           })
         } else if (error) {
           console.error('Error loading blog:', error)
-          toast.error('Blog not found')
+          toast.error('Blog is loading')
           router.push('/dashboard/blogs')
         }
       } catch (error) {
         console.error('Exception loading blog:', error)
-        toast.error('Failed to load blog')
+        toast.error('loading.....')
         router.push('/dashboard/blogs')
       } finally {
         setLoading(false)
@@ -130,8 +130,8 @@ export default function BlogEditPage() {
     return (
       <DashboardLayout>
         <div className="text-center py-12">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Blog not found</h1>
-          <p className="text-gray-600 mb-4">{"The blog you're trying to edit doesn't exist"}.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Blog founds</h1>
+          <p className="text-gray-600 mb-4">{"It's loading time"}.</p>
           <Link href="/dashboard/blogs">
             <Button>Back to Blogs</Button>
           </Link>
