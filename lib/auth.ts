@@ -44,11 +44,11 @@ export const authService = {
   },
 
   // --- Sign Out
-  async signOut() {
+  async signOut(router: any) {
     const { error } = await supabase.auth.signOut()
 
-    if (!error && typeof window !== 'undefined') {
-      window.location.href = '/auth'
+    if (!error && router) {
+      router.push('/auth') // Use Next.js router for navigation
     }
 
     return { error }

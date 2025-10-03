@@ -18,6 +18,7 @@ import {
   BarChart3
 } from 'lucide-react'
 import { authService } from '@/lib/auth'
+import { useAuth } from '@/hooks/use-auth'
 import { toast } from 'react-hot-toast'
 import { cn } from '@/lib/utils'
 
@@ -40,35 +41,48 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
-
+  const { user, loading } = useAuth()
   // --- Fetch current user
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const { user } = await authService.getCurrentUser()
-        if (user) {
-          setUsername(user.user_metadata?.username || null)
-        } else {
-          router.push('/auth') // Redirect if no user session
-        }
-      } catch (err: any) {
-        console.error('Error fetching user:', err.message)
-        router.push('/auth') // Redirect if error occurs
-      }
+    if (!loading && !user) {
+      router.push('/auth')  // Redirect unauthenticated users
     }
-    fetchUser()
-  }, [router])
+  }, [user, loading, router])
+
+  useEffect(() => {
+    if (user) {
+      setUsername(user.user_metadata?.username || null)
+    }
+  }, [user])
+
+  // Loading fallback
+  if(loading) return <div>Loading...</div>
+  
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     try {
+  //       const { user } = await authService.getCurrentUser()
+  //       if (user) {
+  //         setUsername(user.user_metadata?.username || null)
+  //       } else {
+  //         router.push('/auth') // Redirect if no user session
+  //       }
+  //     } catch (err: any) {
+  //       console.error('Error fetching user:', err.message)
+  //       router.push('/auth') // Redirect if error occurs
+  //     }
+  //   }
+  //   fetchUser()
+  // }, [router])
 
   // --- Logout handler
   const handleLogout = async () => {
     try {
-      await authService.signOut()
+      await authService.signOut(router)
       setUsername(null) // clear username
       toast.success('Logged out successfully')
-      router.push('/auth') // always redirect
     } catch (err: any) {
       console.error('Logout error:', err.message)
-      router.push('/auth')
       toast.error('Error logging out')
     }
   }

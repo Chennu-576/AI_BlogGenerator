@@ -40,8 +40,13 @@ export function useAuth() {
 
     // Listen for auth changes
     const { data: { subscription } } = authService.onAuthStateChange((event, session) => {
+      if(event === 'SIGNED_OUT') {
+      setUser(null)
+      setUserId(null)
+    } else {
       setUser(session?.user ?? null)
       setUserId(session?.user?.id ?? null)
+    }
       setLoading(false)
     })
 
