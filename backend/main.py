@@ -121,7 +121,7 @@ def scrape_content_from_url(url: str) -> str:
 
 def calculate_seo_score(title, content, keywords):
     score = 0.0
-    max_score = 10.0
+    max_score = 5.0
     if 50 <= len(title) <= 60:
         score += 1.5
     elif 40 <= len(title) <= 70:
