@@ -41,17 +41,19 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
-  const { user, loading } = useAuth()
+  const { user, loading, logout } = useAuth()
   // --- Fetch current user
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/auth')  // Redirect unauthenticated users
+        // Redirect unauthenticated users
     }
-  }, [user, loading, router])
+  }, [user, loading])
 
   useEffect(() => {
     if (user) {
       setUsername(user.user_metadata?.username || null)
+    }else {
+      setUsername(null);
     }
   }, [user])
 
@@ -78,14 +80,15 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   // --- Logout handler
   const handleLogout = async () => {
     try {
-      await authService.signOut(router)
-      setUsername(null) // clear username
-      toast.success('Logged out successfully')
-    } catch (err: any) {
-      console.error('Logout error:', err.message)
-      toast.error('Error logging out')
+      await logout();
+      
+    } catch (err) {
+     toast.error('Error logging out');
+     router.replace('/auth'); // Fallback
     }
   }
+  
+
 
   const firstLetter = username ? username.charAt(0).toUpperCase() : '?'
 

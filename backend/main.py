@@ -27,7 +27,7 @@ app = FastAPI(title="AI Blog Generator API", version="1.0.0")
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://ai-content-bloggenerator.netlify.app/auth"],
+    allow_origins=["http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -83,9 +83,12 @@ Structure the blog with the following guidelines:
    - Provide actionable insights for readers.
 
 4. **Optional Extras**:
-   - FAQs: 3–5 common questions with answers at the end.
-   - Suggest visual elements like tables, charts, or highlight boxes for key points.
-   - Use bold or italics to emphasize important points.
+   - <h2> for “FAQ” heading.
+   -<h3> for each question.
+   -<p> for answers (default text size).
+   -Include 3–5 common Q&As.
+   -Suggest visuals (tables, charts, or highlight boxes) for key points.
+   -Use bold or italics for emphasis.
 
 5. **Conclusion**:
    - Summarize key takeaways.
