@@ -45,9 +45,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   // --- Fetch current user
   useEffect(() => {
     if (!loading && !user) {
-        // Redirect unauthenticated users
+         router.replace('/auth'); // Redirect unauthenticated users
     }
-  }, [user, loading])
+  }, [user, loading, router])
 
   useEffect(() => {
     if (user) {

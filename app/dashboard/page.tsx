@@ -23,6 +23,12 @@ export default function DashboardPage() {
     }
   }, [loading, user, router])
 
+  useEffect(() => {
+    if (!loading && user) {
+      router.replace('/dashboard');
+    }
+  }, [user, loading, router]);
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
