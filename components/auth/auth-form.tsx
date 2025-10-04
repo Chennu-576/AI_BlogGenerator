@@ -318,8 +318,8 @@ export function AuthForm() {
       if (error) {
         toast.error(error.message);
       } else {
-        toast.success('Logged in successfully');
-        // router.push('/dashboard');
+        // toast.success('Logged in successfully');
+        router.push('/dashboard');
       }
     } catch {
       toast.error('Unexpected error occurred');
