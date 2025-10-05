@@ -117,6 +117,7 @@ export function useAuth() {
     setUser(null);
     setUserId(null);
     setLoading(false);
+    console.log('Redirecting to /auth');
     router.replace('/auth');
   }, [router]);
 

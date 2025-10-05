@@ -267,6 +267,7 @@ import {
 import { Mail, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
+
 import { toast } from 'react-hot-toast';
 
 export function AuthForm() {
@@ -318,7 +319,7 @@ export function AuthForm() {
       if (error) {
         toast.error(error.message);
       } else {
-        // toast.success('Logged in successfully');
+        toast.success('Logged in successfully');
         router.push('/dashboard');
       }
     } catch {

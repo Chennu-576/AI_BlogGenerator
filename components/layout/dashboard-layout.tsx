@@ -59,28 +59,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   // Loading fallback
   if(loading) return <div>Loading...</div>
-  
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     try {
-  //       const { user } = await authService.getCurrentUser()
-  //       if (user) {
-  //         setUsername(user.user_metadata?.username || null)
-  //       } else {
-  //         router.push('/auth') // Redirect if no user session
-  //       }
-  //     } catch (err: any) {
-  //       console.error('Error fetching user:', err.message)
-  //       router.push('/auth') // Redirect if error occurs
-  //     }
-  //   }
-  //   fetchUser()
-  // }, [router])
 
   // --- Logout handler
   const handleLogout = async () => {
+     console.log("Logout clicked");
     try {
       await logout();
+      console.log("Logout success, redirecting...");
+      router.replace('/auth'); // Redirect after successful logout
       
     } catch (err) {
      toast.error('Error logging out');

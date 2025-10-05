@@ -8,6 +8,9 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'AI Blog Generator - Create SEO-Optimized Content',
   description: 'Generate high-quality, SEO-optimized blog content with AI. Perfect for marketers, businesses, and content creators.',
+  icons: {
+    icon: '/favicon.ico',
+  },
 }
 
 export default function RootLayout({
@@ -17,6 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      
       <body className={inter.className}>
         {children}
         <Toaster 
