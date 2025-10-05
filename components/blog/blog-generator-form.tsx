@@ -59,7 +59,7 @@ function InnerForm({ onBlogGenerated }: BlogGeneratorFormProps) {
   const { user, loading } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ||  "http://localhost:8000"
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ||  "https://ai-content-generator-1v33.onrender.com/"
 
   // Apply template from URL param
   useEffect(() => {
