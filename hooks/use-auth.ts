@@ -1,62 +1,4 @@
 
-// 'use client'
-
-// import { useState, useEffect, useCallback  } from 'react'
-// import { User } from '@supabase/supabase-js'
-// import { authService } from '@/lib/auth'
-
-// export function useAuth() {
-//   const [user, setUser] = useState<User | null>(null)
-//   const [userId, setUserId] = useState<string | null>(null) // 👈 add this
-//   const [loading, setLoading] = useState(true)
-
-//   // Function to refresh current user
-//   // const refreshUser = async () => {
-//   //   setLoading(true)
-//   //   const { user, userId } = await authService.getCurrentUser()
-//   //   setUser(user ?? null)
-//   //   setUserId(userId ?? null)
-//   //   setLoading(false)
-//   // }
-//   // --- Refresh user state manually ---
-//   const refreshUser = useCallback(async () => {
-//     setLoading(true)
-//     try {
-//       const { user, userId } = await authService.getCurrentUser()
-//       setUser(user ?? null)
-//       setUserId(userId ?? null)
-//     } catch (err) {
-//       console.error('Error refreshing user:', err)
-//       setUser(null)
-//       setUserId(null)
-//     } finally {
-//       setLoading(false)
-//     }
-//   }, [])
-
-//   useEffect(() => {
-//     // Get initial user
-//     refreshUser()
-
-//     // Listen for auth changes
-//     const { data: { subscription } } = authService.onAuthStateChange((event, session) => {
-//       if(event === 'SIGNED_OUT') {
-//       setUser(null)
-//       setUserId(null)
-//     } else {
-//       setUser(session?.user ?? null)
-//       setUserId(session?.user?.id ?? null)
-//     }
-//       setLoading(false)
-//     })
-
-//     return () => subscription.unsubscribe()
-//   }, [refreshUser])
-
-//   return { user, userId, loading, refreshUser } // 👈 include userId and refreshUser
-// }
-
-
 import { useState, useEffect, useCallback } from 'react';
 import { User } from '@supabase/supabase-js';
 import { authService } from '@/lib/auth';
@@ -83,21 +25,56 @@ export function useAuth() {
   }, []);
 
   useEffect(() => {
-    refreshUser();
-    const { data: { subscription } } = authService.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT') {
-        setUser(null);
-        setUserId(null);
-        router.replace('/auth'); // 🔥 Critical: redirect on sign out
-      } else {
-        setUser(session?.user ?? null);
-        setUserId(session?.user?.id ?? null);
-      }
-      setLoading(false);
-    });
+    let mounted = true;
 
-    return () => subscription.unsubscribe();
-  }, [refreshUser, router]);
+    const getInitialSession = async () => {
+      try {
+        const { user, error } = await authService.getCurrentUser();
+        if (mounted) {
+          setUser(user ?? null);
+          setUserId(user?.id ?? null);
+          setLoading(false);
+        }
+      } catch (err) {
+        if (mounted) {
+          setUser(null);
+          setUserId(null);
+          setLoading(false);
+        }
+      }
+    };
+
+    getInitialSession();
+
+    const { data: { subscription } } = authService.onAuthStateChange(
+      async (event, session) => {
+        if (!mounted) return;
+        
+        console.log('Auth state changed:', event);
+        
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          setUser(session?.user ?? null);
+          setUserId(session?.user?.id ?? null);
+          if (event === 'SIGNED_IN') {
+            router.push('/dashboard');
+          }
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
+          setUserId(null);
+          router.push('/auth');
+        } else if (event === 'USER_UPDATED') {
+          setUser(session?.user ?? null);
+        }
+        
+        setLoading(false);
+      }
+    );
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [router]);
 
   const signup = useCallback(async ({ email, password, username }: { email: string; password: string; username: string }) => {
     return await authService.signUp(email, password, username);

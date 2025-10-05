@@ -1,15 +1,14 @@
 
-// import { supabase } from './supabase'
-// import { AuthError, User } from '@supabase/supabase-js'
+// import { supabase } from './supabase';
+// import { AuthError, User } from '@supabase/supabase-js';
 
 // export interface AuthResult {
-//   user?: User | null
-//   userId?: string | null   // 👈 added userId field
-//   error?: AuthError | null
+//   user?: User | null;
+//   userId?: string | null;
+//   error?: AuthError | null;
 // }
 
 // export const authService = {
-//   // --- Sign Up
 //   async signUp(email: string, password: string, username: string): Promise<AuthResult> {
 //     const { data, error } = await supabase.auth.signUp({
 //       email,
@@ -17,73 +16,59 @@
 //       options: {
 //         data: {
 //           username,
-//           full_name: username, // 👈 saved in Supabase user_metadata
+//           full_name: username,
 //         },
 //       },
-//     })
+//     });
 
-//     return { 
-//       user: data.user, 
-//       userId: data.user?.id ?? null, // 👈 return userId
-//       error 
-//     }
+//     return {
+//       user: data.user,
+//       userId: data.user?.id ?? null,
+//       error,
+//     };
 //   },
 
-//   // --- Sign In
 //   async signIn(email: string, password: string): Promise<AuthResult> {
 //     const { data, error } = await supabase.auth.signInWithPassword({
 //       email,
 //       password,
-//     })
+//     });
 
-//     return { 
-//       user: data.user, 
-//       userId: data.user?.id ?? null, 
-//       error 
-//     }
+//     return {
+//       user: data.user,
+//       userId: data.user?.id ?? null,
+//       error,
+//     };
 //   },
 
-//   // --- Sign Out
-//   async signOut(router: any) {
-//     const { error } = await supabase.auth.signOut()
-
-//     if (!error && router) {
-//       router.push('/auth') // Use Next.js router for navigation
-//     }
-
-//     return { error }
+//   async signOut() {
+//     const { error } = await supabase.auth.signOut();
+//       if (error) console.error('Sign out error:', error);
+//     return { error };
 //   },
 
-//   // --- Reset Password
 //   async resetPassword(email: string) {
 //     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-//       redirectTo: `${window.location.origin}/auth/reset-password`,
-//     })
-//     return { error }
+//       redirectTo: `${window.location.origin}/auth/reset-password`, // Change if needed
+//     });
+
+//     return { error };
 //   },
 
-//   // --- Update Password
-//   async updatePassword(password: string) {
-//     const { error } = await supabase.auth.updateUser({ password })
-//     return { error }
-//   },
-
-//   // --- Get Current User
 //   async getCurrentUser(): Promise<AuthResult> {
-//     const { data, error } = await supabase.auth.getUser()
+//     const { data, error } = await supabase.auth.getUser();
 
-//     return { 
-//       user: data.user, 
-//       userId: data.user?.id ?? null, 
-//       error 
-//     }
+//     return {
+//       user: data.user,
+//       userId: data.user?.id ?? null,
+//       error,
+//     };
 //   },
 
-//   // --- Auth State Change
 //   onAuthStateChange(callback: (event: string, session: any) => void) {
-//     return supabase.auth.onAuthStateChange(callback)
+//     return supabase.auth.onAuthStateChange(callback);
 //   },
-// }
+// };
 
 import { supabase } from './supabase';
 import { AuthError, User } from '@supabase/supabase-js';
@@ -134,8 +119,13 @@ export const authService = {
   },
 
   async resetPassword(email: string) {
+    // Use the Netlify URL for production
+    const redirectUrl = typeof window !== 'undefined' 
+      ? `${window.location.origin}/auth/callback`
+      : 'https://aiblog-generated.netlify.app/auth/callback';
+
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/reset-password`, // Change if needed
+      redirectTo: redirectUrl,
     });
 
     return { error };
