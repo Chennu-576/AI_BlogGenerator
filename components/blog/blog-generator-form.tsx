@@ -59,7 +59,8 @@ function InnerForm({ onBlogGenerated }: BlogGeneratorFormProps) {
   const { user, loading } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ||  "https://ai-content-generator-1v33.onrender.com/"
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ||  "https://ai-content-generator-1v33.onrender.com"
+  const cleanBackendUrl = backendUrl?.replace(/\/$/, '')
 
   // Apply template from URL param
   useEffect(() => {
@@ -86,8 +87,8 @@ function InnerForm({ onBlogGenerated }: BlogGeneratorFormProps) {
     setIsGenerating(true)
 
     try {
-      console.log('Calling backend:', backendUrl)
-      const response = await fetch(`${backendUrl}/generate-blog`, {
+      console.log('Calling backend:', cleanBackendUrl)
+      const response = await fetch(`${cleanBackendUrl}/generate-blog`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -107,12 +108,23 @@ function InnerForm({ onBlogGenerated }: BlogGeneratorFormProps) {
       })
 
       if (!response.ok) {
-        const errMsg = await response.text()
-        throw new Error(errMsg || 'Failed to generate blog')
+         let errorMessage = 'Failed to generate blog'
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.detail || errorData.message || `HTTP error! status: ${response.status}`
+        } catch {
+          errorMessage = `HTTP error! status: ${response.status}`
+        }
+        throw new Error(errorMessage)
+        // const errMsg = await response.text()
+        // throw new Error(errMsg || 'Failed to generate blog')
       }
 
       const generatedBlog = await response.json()
       console.log('Generated blog:', generatedBlog)
+      if (!generatedBlog || !generatedBlog.id) {
+        throw new Error('Invalid response from server - missing blog data')
+      }
       toast.success('Blog generated successfully!')
 
       if (onBlogGenerated) onBlogGenerated(generatedBlog)

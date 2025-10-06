@@ -1,4 +1,313 @@
 
+# from fastapi import FastAPI, HTTPException, Request
+# from fastapi.middleware.cors import CORSMiddleware
+# from openai import OpenAI
+# import os
+# from bs4 import BeautifulSoup
+# import requests
+# import re
+# from dotenv import load_dotenv
+# from pathlib import Path
+# from supabase import create_client, Client
+# from datetime import datetime
+# import uvicorn
+# import logging
+
+# # setup basic logging
+# logging.basicConfig(level=logging.INFO)
+# logger = logging.getLogger("ai-blog")
+
+# # Load .env
+# env_path = Path(__file__).parent / ".env"
+# load_dotenv(dotenv_path=env_path)
+
+# # Initialize FastAPI
+# app = FastAPI(title="AI Blog Generator API", version="1.0.0")
+
+# # CORS
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["http://localhost:3000", "https://aiblog-generated.netlify.app"],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
+
+# # OpenAI
+
+# client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# # if not openai.api_key:
+# #     raise ValueError("OpenAI API key not set. Add it in .env file.")
+# logger.info("OpenAI key found (hidden)")
+
+# # Supabase
+# SUPABASE_URL = os.getenv("SUPABASE_URL")
+# SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
+# if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
+#     logger.warning("Supabase URL or service key missing — DB operations will fail")
+# supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+
+# # --- Template & system messages (AS STRINGS) ---
+# TEMPLATE_PROMPT = """
+# Write a comprehensive blog post about {topic} in {language}.
+# Target word count: {word_count} words.
+# Tone: {tone}
+# Company: {company_name}  # <-- make sure this is passed from your frontend
+
+# Choose the style based on context or user preference: 
+# - General informative blog
+# - Product review
+# - Listicle
+# - How-to guide
+# - Press release
+
+# Structure the blog with the following guidelines:
+
+# 1. **Title (H1)**:
+#    - Engaging and attention-grabbing.
+#    - Include main keyword naturally.
+#    - Include {company_name} if it fits organically.
+
+# 2. **Introduction**:
+#    - Start with a hook, problem, or relatable scenario.
+#    - Mention {company_name} naturally if relevant.
+#    - Clearly state the solution or purpose of the blog.
+
+# 3. **Body (H2 Headings)**:
+#    - Each section should have a clear H2 heading.
+#    - Include detailed content, examples, stats, or case studies.
+#    - Mention {company_name} at least thrice in the body in a natural context.
+#    - Use bullet points or numbered lists where applicable.
+#    - Maintain professional, human-like tone with occasional conversational phrases.
+#    - Naturally integrate keywords: {keywords}.
+#    - Provide actionable insights for readers.
+
+# 4. **Optional Extras**:
+#    - <h2> for “FAQ” heading.
+#    -<h3> for each question.
+#    -<p> for answers (default text size).
+#    -Include 3–5 common Q&As.
+#    -Suggest visuals (tables, charts, or highlight boxes) for key points.
+#    -Use bold or italics for emphasis.
+
+# 5. **Conclusion**:
+#    - Summarize key takeaways.
+#    - Include a strong call-to-action (CTA) mentioning {company_name} if suitable.
+# """
+
+# SYSTEM_MESSAGE = """
+# You are an expert human content writer and SEO strategist.
+# Your job is to write blog posts that feel 70% human-written.
+# Guidelines:
+# - H1 only for the main title; H2 for all sections.
+# - Use short paragraphs (2–4 sentences) for readability.
+# - Avoid robotic tone, repetition, or filler content.
+# - Ensure proper keyword usage without stuffing.
+# - Add light personality or conversational tone where appropriate.
+# - Optimize for SEO naturally (heading hierarchy, keyword placement, readability).
+
+# Output format: Plain text or Markdown only.
+# """
+
+# # --- Helper functions ---
+# def scrape_content_from_url(url: str) -> str:
+#     try:
+#         res = requests.get(url, timeout=10, headers={"User-Agent": "Mozilla/5.0"})
+#         res.raise_for_status()
+#         soup = BeautifulSoup(res.text, "html.parser")
+#         for s in soup(["script", "style"]):
+#             s.decompose()
+#         return " ".join(p.get_text() for p in soup.find_all("p"))[:2000]
+#     except Exception as e:
+#         logger.warning(f"Scrape error for {url}: {e}")
+#         return ""
+
+# def calculate_seo_score(title, content, keywords):
+#     score = 0.0
+#     max_score = 10.0
+#     if 50 <= len(title) <= 60:
+#         score += 1.5
+#     elif 40 <= len(title) <= 70:
+#         score += 1.0
+#     word_count = len(content.split())
+#     if word_count >= 300:
+#         score += 1.5
+#         if word_count >= 800:
+#             score += 0.5
+#     if content.count("# ") == 1:
+#         score += 1.0
+#     if content.count("## ") >= 3:
+#         score += 1.0
+#     content_lower = content.lower()
+#     title_lower = title.lower()
+#     for kw in keywords:
+#         if kw.lower() in title_lower:
+#             score += 0.5
+#         kw_count = content_lower.count(kw.lower())
+#         kw_density = (kw_count / word_count) * 100 if word_count else 0
+#         if 1 <= kw_density <= 3:
+#             score += 0.5
+#     score += 1.0
+#     return min(score, max_score)
+
+# def generate_meta_description(content, max_length=160):
+#     paragraphs = content.split("\n\n")
+#     first_para = paragraphs[0] if paragraphs else content[:200]
+#     clean = re.sub(r"[#*`]", "", first_para)
+#     return clean[:max_length-3] + "..." if len(clean) > max_length else clean
+
+# # --- Endpoints ---
+# @app.post("/generate-blog")
+# async def generate_blog(request: Request):
+#     try:
+#         data = await request.json()
+#         logger.info("Received /generate-blog payload keys: %s", list(data.keys()))
+#         topic = data.get("topic", "Default Topic")
+#         company_name = data.get("company_name", "")
+#         keywords = data.get("keywords", [])
+#         word_count = data.get("word_count", 800)
+#         tone = data.get("tone", "professional")
+#         language = data.get("language", "English")
+#         sample_blog = data.get("sample_blog")
+#         company_url = data.get("company_url")
+#         user_id = data.get("user_id")
+
+#         # Build prompt
+#         prompt = TEMPLATE_PROMPT.format(
+#             topic=topic,
+#             company_name=company_name or " ",
+#             word_count=word_count,
+#             tone=tone,
+#             language=language,
+#             keywords=", ".join(keywords) if keywords else "relevant industry terms"
+#         )
+
+#         if sample_blog:
+#             prompt += f"\n\nMatch the writing style:\n'''{sample_blog[:1500]}'''\n"
+#         if company_url:
+#             scraped = scrape_content_from_url(company_url)
+#             if scraped:
+#                 prompt += f"\n\nTake inspiration:\n'''{scraped}'''\n"
+
+#         prompt += "\nUse H1 for title and H2 for headings. Markdown only."
+#         logger.info("Prompt length: %d chars", len(prompt))
+
+#         # OpenAI call (robust)
+#         response = client.chat.completions.create(
+#             model="gpt-4o-mini",
+#             messages=[
+#                 {"role": "system", "content": SYSTEM_MESSAGE},
+#                 {"role": "user", "content": prompt}
+#             ],
+#             max_tokens=2000,
+#             temperature=0.7
+#         )
+
+#         # Extract generated text robustly
+#         generated_text = None
+#         try:
+#             generated_text = response["choices"][0]["message"]["content"].strip()
+#         except Exception:
+#             try:
+#                 # fallback to attribute access
+#                 generated_text = response.choices[0].message.content.strip()
+#             except Exception as ex:
+#                 logger.error("Unable to read OpenAI response: %s", ex)
+#                 raise HTTPException(status_code=500, detail="OpenAI returned unexpected response")
+
+#         logger.info("Generated text length: %d", len(generated_text))
+
+#         # Extract title
+#         match = re.search(r"^#\s+(.*)", generated_text, re.MULTILINE)
+#         if match:
+#             title = match.group(1).strip()
+#             content = re.sub(r"^#\s+.*\n", "", generated_text, count=1, flags=re.MULTILINE).strip()
+#         else:
+#             title = topic
+#             content = generated_text
+
+#         seo_score = calculate_seo_score(title, content, keywords or [])
+#         meta_description = generate_meta_description(content)
+#         word_count_calc = len(content.split())
+
+#         # Save to Supabase
+#         blog_data = {
+#             "title": title,
+#             "topic": topic,
+#             "content": content,
+#             "word_count": word_count_calc,
+#             "seo_score": round(seo_score),
+#             "meta_description": meta_description,
+#             "keywords_used": keywords or [],
+#             "template": "general",
+#             "tone": tone,
+#             "language": language,
+#             "company_name": company_name,
+#             "status": "published",
+#             "user_id": user_id,
+#             "created_at": datetime.utcnow().isoformat()
+#         }
+
+#         res = supabase.table("blogs").insert(blog_data, returning="representation").execute()
+#         logger.info("Supabase insert result: %s", getattr(res, "status_code", "no-status"))
+#         if not getattr(res, "data", None):
+#             # include res in error to help debugging
+#             raise HTTPException(status_code=500, detail=f"Failed to insert blog into Supabase. Raw response: {res}")
+
+#         row = res.data[0]
+#         return row
+
+#     except HTTPException:
+#         raise
+#     except Exception as e:
+#         logger.exception("Error in /generate-blog")
+#         raise HTTPException(status_code=500, detail=str(e))
+
+
+# @app.get("/blogs/{blog_id}")
+# async def get_blog(blog_id: str, user_id: str = None):
+#     try:
+#         query = supabase.table("blogs").select("*")
+#         if user_id:
+#             query = query.eq("user_id", user_id)
+#         res = query.eq("id", blog_id).maybe_single().execute()
+#         if not getattr(res, "data", None):
+#             raise HTTPException(status_code=404, detail="Blog not found")
+#         return res.data
+#     except Exception as e:
+#         logger.exception("Error in /blogs/{id}")
+#         raise HTTPException(status_code=500, detail=str(e))
+
+
+# @app.post("/scrape-content")
+# async def scrape_content(request: Request):
+#     try:
+#         data = await request.json()
+#         url = data.get("url")
+#         res = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
+#         res.raise_for_status()
+#         soup = BeautifulSoup(res.content, "html.parser")
+#         for s in soup(["script", "style"]):
+#             s.decompose()
+#         title = soup.find("title").get_text() if soup.find("title") else ""
+#         content = "\n".join(line.strip() for line in soup.get_text().splitlines() if line.strip())
+#         links = [a["href"] for a in soup.find_all("a", href=True)][:20]
+#         images = [img["src"] for img in soup.find_all("img", src=True)][:10]
+#         return {"url": url, "title": title, "content": content[:2000], "links": links, "images": images}
+#     except Exception as e:
+#         logger.exception("Error in /scrape-content")
+#         raise HTTPException(status_code=500, detail=str(e))
+
+
+# @app.get("/health")
+# async def health_check():
+#     return {"status": "healthy", "message": "API running"}
+
+
+# if __name__ == "__main__":
+#     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from openai import OpenAI
@@ -27,17 +336,14 @@ app = FastAPI(title="AI Blog Generator API", version="1.0.0")
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://aiblog-generated.netlify.app"],
+    allow_origins=["http://localhost:3000", "https://aiblog-generated.netlify.app", "http://localhost:8000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # OpenAI
-
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-# if not openai.api_key:
-#     raise ValueError("OpenAI API key not set. Add it in .env file.")
 logger.info("OpenAI key found (hidden)")
 
 # Supabase
@@ -52,7 +358,7 @@ TEMPLATE_PROMPT = """
 Write a comprehensive blog post about {topic} in {language}.
 Target word count: {word_count} words.
 Tone: {tone}
-Company: {company_name}  # <-- make sure this is passed from your frontend
+Company: {company_name}
 
 Choose the style based on context or user preference: 
 - General informative blog
@@ -83,12 +389,12 @@ Structure the blog with the following guidelines:
    - Provide actionable insights for readers.
 
 4. **Optional Extras**:
-   - <h2> for “FAQ” heading.
-   -<h3> for each question.
-   -<p> for answers (default text size).
-   -Include 3–5 common Q&As.
-   -Suggest visuals (tables, charts, or highlight boxes) for key points.
-   -Use bold or italics for emphasis.
+   - <h2> for "FAQ" heading.
+   - <h3> for each question.
+   - <p> for answers (default text size).
+   - Include 3–5 common Q&As.
+   - Suggest visuals (tables, charts, or highlight boxes) for key points.
+   - Use bold or italics for emphasis.
 
 5. **Conclusion**:
    - Summarize key takeaways.
@@ -161,7 +467,9 @@ def generate_meta_description(content, max_length=160):
 async def generate_blog(request: Request):
     try:
         data = await request.json()
+        logger.info("=== GENERATE BLOG REQUEST ===")
         logger.info("Received /generate-blog payload keys: %s", list(data.keys()))
+        
         topic = data.get("topic", "Default Topic")
         company_name = data.get("company_name", "")
         keywords = data.get("keywords", [])
@@ -192,7 +500,7 @@ async def generate_blog(request: Request):
         prompt += "\nUse H1 for title and H2 for headings. Markdown only."
         logger.info("Prompt length: %d chars", len(prompt))
 
-        # OpenAI call (robust)
+        # OpenAI call
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
@@ -203,17 +511,22 @@ async def generate_blog(request: Request):
             temperature=0.7
         )
 
-        # Extract generated text robustly
-        generated_text = None
+        # FIXED: Correct OpenAI response handling
         try:
-            generated_text = response["choices"][0]["message"]["content"].strip()
-        except Exception:
-            try:
-                # fallback to attribute access
+            if hasattr(response, 'choices') and response.choices:
                 generated_text = response.choices[0].message.content.strip()
-            except Exception as ex:
-                logger.error("Unable to read OpenAI response: %s", ex)
-                raise HTTPException(status_code=500, detail="OpenAI returned unexpected response")
+            else:
+                logger.error("OpenAI response has no choices: %s", response)
+                raise HTTPException(status_code=500, detail="OpenAI returned empty response")
+                
+            if not generated_text:
+                logger.error("OpenAI returned empty content")
+                raise HTTPException(status_code=500, detail="OpenAI returned empty content")
+                
+        except Exception as ex:
+            logger.error("Unable to read OpenAI response: %s", ex)
+            logger.error("Full response: %s", response)
+            raise HTTPException(status_code=500, detail=f"OpenAI response parsing failed: {str(ex)}")
 
         logger.info("Generated text length: %d", len(generated_text))
 
@@ -248,13 +561,17 @@ async def generate_blog(request: Request):
             "created_at": datetime.utcnow().isoformat()
         }
 
-        res = supabase.table("blogs").insert(blog_data, returning="representation").execute()
-        logger.info("Supabase insert result: %s", getattr(res, "status_code", "no-status"))
-        if not getattr(res, "data", None):
-            # include res in error to help debugging
-            raise HTTPException(status_code=500, detail=f"Failed to insert blog into Supabase. Raw response: {res}")
+        # FIXED: Supabase insert with better error handling
+        try:
+            res = supabase.table("blogs").insert(blog_data).execute()
+            if not res.data:
+                logger.error("Supabase insert failed: %s", res)
+                raise HTTPException(status_code=500, detail="Failed to save blog to database")
+            row = res.data[0]
+        except Exception as db_error:
+            logger.error("Database error: %s", db_error)
+            raise HTTPException(status_code=500, detail="Database operation failed")
 
-        row = res.data[0]
         return row
 
     except HTTPException:
