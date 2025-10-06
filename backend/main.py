@@ -326,6 +326,13 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("ai-blog")
 
+# DEBUG: Check if environment variables are loaded
+logger.info("=== ENVIRONMENT VARIABLES CHECK ===")
+logger.info("OPENAI_API_KEY loaded: %s", "YES" if os.getenv("OPENAI_API_KEY") else "NO")
+logger.info("SUPABASE_URL loaded: %s", "YES" if os.getenv("SUPABASE_URL") else "NO") 
+logger.info("SUPABASE_SERVICE_KEY loaded: %s", "YES" if os.getenv("SUPABASE_SERVICE_KEY") else "NO")
+logger.info("=== END CHECK ===")
+
 # Load .env
 env_path = Path(__file__).parent / ".env"
 load_dotenv(dotenv_path=env_path)
@@ -336,7 +343,7 @@ app = FastAPI(title="AI Blog Generator API", version="1.0.0")
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://aiblog-generated.netlify.app", "https://aiblog-generated.netlify.app/", "https://*.netlify.app"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
