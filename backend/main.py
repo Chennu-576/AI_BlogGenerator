@@ -336,7 +336,7 @@ app = FastAPI(title="AI Blog Generator API", version="1.0.0")
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://aiblog-generated.netlify.app", "http://localhost:8000"],
+    allow_origins=["http://localhost:3000", "https://aiblog-generated.netlify.app", "https://aiblog-generated.netlify.app/", "https://*.netlify.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
