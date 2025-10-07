@@ -372,20 +372,26 @@ except Exception as e:
 # --- Template & system messages ---
 TEMPLATE_PROMPT = """
 Write a comprehensive blog post about {topic} in {language}.
- Target word count: {word_count} words.
- Tone: {tone}
- Company: {company_name}  # <-- make sure this is passed from your frontend
+Target word count: {word_count} words.
+Tone: {tone}
+Company: {company_name}
 
- Choose the style based on context or user preference: 
- - General informative blog
- - Product review
- - Listicle
- - How-to guide
- - Press release
+LANGUAGE & LENGTH REQUIREMENTS:
+- Write entirely in {language}
+- Target exactly {word_count} words
+- Use natural {language} expressions and idioms
+- Maintain cultural appropriateness for {language}
 
- Structure the blog with the following guidelines:
+Choose the style based on context or user preference: 
+- General informative blog
+- Product review
+- Listicle
+- How-to guide
+- Press release
 
- 1. **Title (H1)**:
+Structure the blog with the following guidelines:
+
+1. **Title (H1)**:
    - Engaging and attention-grabbing.
    - Include main keyword naturally.
    - Include {company_name} if it fits organically.
@@ -395,39 +401,45 @@ Write a comprehensive blog post about {topic} in {language}.
    - Mention {company_name} naturally if relevant.
    - Clearly state the solution or purpose of the blog.
 
- 3. **Body (H2 Headings)**:
+3. **Body (H2 Headings)**:
    - Each section should have a clear H2 heading.
    - Include detailed content, examples, stats, or case studies.
    - Mention {company_name} at least thrice in the body in a natural context.
    - Use bullet points or numbered lists where applicable.
-    - Maintain professional, human-like tone with occasional conversational phrases.
-    - Naturally integrate keywords: {keywords}.
-    - Provide actionable insights for readers.
+   - Maintain professional, human-like tone with occasional conversational phrases.
+   - Naturally integrate keywords: {keywords}.
+   - Provide actionable insights for readers.
 
- 4. **Optional Extras**:
-    - <h2> for “FAQ” heading.
-    -<h3> for each question.
-    -<p> for answers (default text size).
-    -Include 3–5 common Q&As.
-    -Suggest visuals (tables, charts, or highlight boxes) for key points.
-    -Use bold or italics for emphasis.
+4. **Optional Extras**:
+   - <h2> for "FAQ" heading.
+   - <h3> for each question.
+   - <p> for answers (default text size).
+   - Include 3–5 common Q&As.
+   - Suggest visuals (tables, charts, or highlight boxes) for key points.
+   - Use bold or italics for emphasis.
 
- 5. **Conclusion**:
-    - Summarize key takeaways.
-    - Include a strong call-to-action (CTA) mentioning {company_name} if suitable.
+5. **Conclusion**:
+   - Summarize key takeaways.
+   - Include a strong call-to-action (CTA) mentioning {company_name} if suitable.
 """
 
 SYSTEM_MESSAGE = """
 You are an expert human content writer and SEO strategist.
 Your job is to write blog posts that feel 70% human-written.
- Guidelines:
- - H1 only for the main title; H2 for all sections.
- - Use short paragraphs (2–4 sentences) for readability.
- - Avoid robotic tone, repetition, or filler content.
- - Ensure proper keyword usage without stuffing.
- - Add light personality or conversational tone where appropriate.
- - Optimize for SEO naturally (heading hierarchy, keyword placement, readability).
 
+LANGUAGE-SPECIFIC GUIDELINES:
+- Write entirely in the requested language: {tone}
+- Use natural expressions and idioms appropriate for that language
+- Maintain cultural context and relevance
+- Adapt tone and style for the language's norms
+
+Guidelines:
+- H1 only for the main title; H2 for all sections.
+- Use short paragraphs (2–4 sentences) for readability.
+- Avoid robotic tone, repetition, or filler content.
+- Ensure proper keyword usage without stuffing.
+- Add light personality or conversational tone where appropriate.
+- Optimize for SEO naturally (heading hierarchy, keyword placement, readability).
 Output format: Plain text or Markdown only.
 """
 
@@ -444,7 +456,7 @@ def scrape_content_from_url(url: str) -> str:
         logger.warning(f"Scrape error for {url}: {e}")
         return ""
 
-def calculate_seo_score(title, content, keywords, word_count):
+def calculate_seo_score(title, content, keywords):
     score = 0.0
     max_score = 10.0
     
@@ -453,48 +465,35 @@ def calculate_seo_score(title, content, keywords, word_count):
     if 50 <= title_length <= 60:
         score += 2.0
     elif 40 <= title_length <= 70:
-        score += 1.5
-    
-    # 2. Content length check - GUARANTEED SCORES
-    actual_words = len(content.split())
-    
-    # EXACT SCORING YOU WANTED:
-    if word_count == 800 and actual_words >= 700:
-        score += 2.0  # Will give ~7/10
-    elif word_count == 1200 and actual_words >= 1000:  
-        score += 2.5  # Will give ~8/10
-    elif word_count == 1500 and actual_words >= 1300:
-        score += 3.0  # Will give ~9/10
+        score += 1.0
     else:
-        # Fallback scoring
-        if actual_words >= 1000:
-            score += 2.5
-        elif actual_words >= 700:
-            score += 2.0
-        elif actual_words >= 500:
-            score += 1.5
-        elif actual_words >= 300:
-            score += 1.0
+        score += 0.5
+    
+    # 2. Content length check (3 points)
+    word_count = len(content.split())
+    if word_count >= 1000:
+        score += 3.0
+    elif word_count >= 700:
+        score += 2.5
+    elif word_count >= 500:
+        score += 2.0
+    elif word_count >= 300:
+        score += 1.5
+    else:
+        score += 0.5
     
     # 3. Heading structure check (2 points)
     h1_count = content.count('# ')
     h2_count = content.count('## ')
-    h3_count = content.count('### ')
     
     if h1_count == 1:
         score += 1.0
-    if h2_count >= 3:
+    if h2_count >= 2:
         score += 1.0
-    elif h2_count >= 2:
+    elif h2_count >= 1:
         score += 0.5
     
-    # 4. FAQ Bonus (1 point) - NEW
-    if h3_count >= 3:  # At least 3 FAQ questions
-        score += 1.0
-    elif h3_count >= 1:
-        score += 0.5
-    
-    # 5. Keyword optimization (2 points)
+    # 4. Keyword optimization (3 points)
     content_lower = content.lower()
     title_lower = title.lower()
     
@@ -504,33 +503,30 @@ def calculate_seo_score(title, content, keywords, word_count):
         if kw_lower and len(kw_lower) > 2:
             # Keyword in title
             if kw_lower in title_lower:
-                keyword_score += 0.3
+                keyword_score += 0.5
             
-            # Keyword in content
-            if kw_lower in content_lower:
-                keyword_score += 0.2
+            # Keyword density in content
+            kw_count = content_lower.count(kw_lower)
+            if word_count > 0:
+                kw_density = (kw_count / word_count) * 100
+                if 1.0 <= kw_density <= 3.0:
+                    keyword_score += 0.3
+                elif kw_density > 0:
+                    keyword_score += 0.1
     
-    score += min(keyword_score, 2.0)
+    score += min(keyword_score, 3.0)  # Max 3 points for keywords
     
-    # 6. Human-like quality bonus (1 point)
-    # Check for human writing patterns
-    if '?' in content:  # Rhetorical questions
-        score += 0.3
-    if "'" in content or "’" in content:  # Contractions
-        score += 0.3
-    if actual_words >= 400:
-        score += 0.4
+    # 5. Content quality bonus (1 point)
+    # Check for paragraph structure
+    paragraphs = content.split('\n\n')
+    if len(paragraphs) >= 5:
+        score += 0.5
     
-    # ENSURE EXACT SCORES YOU WANTED:
-    if word_count == 800:
-        score = min(score, 7.5)  # ~7/10
-    elif word_count == 1200:
-        score = min(score, 8.5)  # ~8/10  
-    elif word_count == 1500:
-        score = min(score, 9.5)  # ~9/10
+    # Check for list items (bullet points)
+    if '- ' in content or '* ' in content:
+        score += 0.5
     
-    return min(round(score, 1), max_score)
-
+    return min(round(score, 1), max_score)  # Return rounded score
 
 def generate_meta_description(content, max_length=160):
     paragraphs = content.split("\n\n")
@@ -579,27 +575,11 @@ async def generate_blog(request: Request):
             return {
                 "id": "fallback-blog",
                 "title": f"{topic} - Blog Post",
-                "content": f"""This is a comprehensive blog post about {topic}. The content covers key aspects and provides valuable insights for readers.",
-                ## Introduction
-This guide covers everything about {topic}.
-
-## FAQ
-### What is {topic}?
-{topic} is an important concept that...
-
-### Why is {topic} important?
-It offers significant benefits for...
-
-### How to get started?
-Begin with basic understanding and...
-
-## Conclusion
-Start your {topic} journey today.""",
+                "content": f"This is a comprehensive blog post about {topic}. The content covers key aspects and provides valuable insights for readers.",
                 "seo_score": 7,
                 "meta_description": f"Learn about {topic} in this detailed blog post",
                 "word_count": 300,
                 "status": "published"
-        
             }
 
         response = client.chat.completions.create(
@@ -632,10 +612,9 @@ Start your {topic} journey today.""",
             title = topic
             content = generated_text
 
-        seo_score = calculate_seo_score(title, content, keywords or [],  word_count)
+        seo_score = calculate_seo_score(title, content, keywords or [])
         meta_description = generate_meta_description(content)
         word_count_calc = len(content.split())
-        
 
         # Save to Supabase - FIXED error handling
         blog_data = {
