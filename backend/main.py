@@ -371,71 +371,63 @@ except Exception as e:
 
 # --- Template & system messages ---
 TEMPLATE_PROMPT = """
-Write {word_count} words about {topic} in {language} using {tone} tone.
+Write a comprehensive blog post about {topic} in {language}.
+ Target word count: {word_count} words.
+ Tone: {tone}
+ Company: {company_name}  # <-- make sure this is passed from your frontend
 
-Sound like human expert sharing knowledge naturally - not perfect AI.
+ Choose the style based on context or user preference: 
+ - General informative blog
+ - Product review
+ - Listicle
+ - How-to guide
+ - Press release
 
-HUMAN-LIKE WRITING:
-- Use contractions: "it's", "don't", "we're"
-- Mix sentence lengths (short/medium/long)
-- Add rhetorical questions
-- Include personal insights  
-- Use conversational transitions
-- Mild imperfections are okay
+ Structure the blog with the following guidelines:
 
-STRUCTURE:
-# [Engaging Title]
+ 1. **Title (H1)**:
+   - Engaging and attention-grabbing.
+   - Include main keyword naturally.
+   - Include {company_name} if it fits organically.
 
-## Introduction
-Start conversationally based on tone
+2. **Introduction**:
+   - Start with a hook, problem, or relatable scenario.
+   - Mention {company_name} naturally if relevant.
+   - Clearly state the solution or purpose of the blog.
 
-## Core Concepts  
-Explain fundamentals naturally
+ 3. **Body (H2 Headings)**:
+   - Each section should have a clear H2 heading.
+   - Include detailed content, examples, stats, or case studies.
+   - Mention {company_name} at least thrice in the body in a natural context.
+   - Use bullet points or numbered lists where applicable.
+    - Maintain professional, human-like tone with occasional conversational phrases.
+    - Naturally integrate keywords: {keywords}.
+    - Provide actionable insights for readers.
 
-## Practical Applications
-Share real-world examples
+ 4. **Optional Extras**:
+    - <h2> for “FAQ” heading.
+    -<h3> for each question.
+    -<p> for answers (default text size).
+    -Include 3–5 common Q&As.
+    -Suggest visuals (tables, charts, or highlight boxes) for key points.
+    -Use bold or italics for emphasis.
 
-## Key Benefits
-Highlight value conversationally
-
-## Actionable Tips
-Provide useful advice
-
-## FAQ
-### What is {topic}?
-### How can I get started with {topic}?
-### What are the main benefits of {topic}?
-### What challenges might I face with {topic}?
-
-## Conclusion
-Wrap up naturally
-
-Write like you're explaining to a colleague, not writing textbook.
-Company context: {company_name}
-Keywords to naturally include: {keywords}
-
-INCLUDE 3-4 FAQs in the FAQ section using ### for questions.
+ 5. **Conclusion**:
+    - Summarize key takeaways.
+    - Include a strong call-to-action (CTA) mentioning {company_name} if suitable.
 """
 
 SYSTEM_MESSAGE = """
-You are a human expert writer. Write content that sounds 70% human, 30% professional.
+You are an expert human content writer and SEO strategist.
+Your job is to write blog posts that feel 70% human-written.
+ Guidelines:
+ - H1 only for the main title; H2 for all sections.
+ - Use short paragraphs (2–4 sentences) for readability.
+ - Avoid robotic tone, repetition, or filler content.
+ - Ensure proper keyword usage without stuffing.
+ - Add light personality or conversational tone where appropriate.
+ - Optimize for SEO naturally (heading hierarchy, keyword placement, readability).
 
-CRITICAL GUIDELINES:
-- Use natural language patterns
-- Mix formal and informal elements
-- Add personal voice and perspective
-- Vary sentence structure dramatically
-- Include conversational elements
-- Sound authentic and relatable
-- Include comprehensive FAQ section with 3-4 questions
-
-Tone: {tone} - adapt naturally while maintaining human authenticity.
-
-FAQ SECTION REQUIREMENTS:
-- Use ### for each question heading
-- Provide detailed, helpful answers
-- Make FAQs practical and relevant
-- Answer like a knowledgeable expert
 Output format: Plain text or Markdown only.
 """
 
