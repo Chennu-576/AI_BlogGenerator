@@ -569,17 +569,17 @@ async def generate_blog(request: Request):
                 prompt += f"\n\nUse this as reference:\n{scraped}"
 
         # OpenAI call - FIXED with GPT-4o-mini
-        if not client:
-            # Fallback if OpenAI not configured
-            return {
-                "id": "fallback-blog",
-                "title": f"{topic} - Blog Post",
-                "content": f"This is a comprehensive blog post about {topic}. The content covers key aspects and provides valuable insights for readers.",
-                "seo_score": 7,
-                "meta_description": f"Learn about {topic} in this detailed blog post",
-                "word_count": 300,
-                "status": "published"
-            }
+        # if not client:
+        #     # Fallback if OpenAI not configured
+        #     return {
+        #         "id": "fallback-blog",
+        #         "title": f"{topic} - Blog Post",
+        #         "content": f"This is a comprehensive blog post about {topic}. The content covers key aspects and provides valuable insights for readers.",
+        #         "seo_score": 7,
+        #         "meta_description": f"Learn about {topic} in this detailed blog post",
+        #         "word_count": 300,
+        #         "status": "published"
+        #     }
 
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",  
@@ -655,16 +655,18 @@ async def generate_blog(request: Request):
         raise
     except Exception as e:
         logger.exception("Unexpected error in /generate-blog")
-        # Return fallback blog instead of error
-        return {
-            "id": "error-fallback",
-            "title": f"{data.get('topic', 'Technology')} - Blog Post",
-            "content": f"This blog post discusses {data.get('topic', 'technology')} in detail. Despite a temporary technical issue, the content has been generated successfully.",
-            "seo_score": 6,
-            "meta_description": f"Comprehensive guide to {data.get('topic', 'technology')}",
-            "word_count": 400,
-            "status": "published"
-        }
+        raise HTTPException(status_code=500, detail=str(e))
+
+       # Return fallback blog instead of error
+        # return {
+        #     "id": "error-fallback",
+        #     "title": f"{data.get('topic', 'Technology')} - Blog Post",
+        #     "content": f"This blog post discusses {data.get('topic', 'technology')} in detail. Despite a temporary technical issue, the content has been generated successfully.",
+        #     "seo_score": 6,
+        #     "meta_description": f"Comprehensive guide to {data.get('topic', 'technology')}",
+        #     "word_count": 400,
+        #     "status": "published"
+        # }
 
 @app.get("/blogs/{blog_id}")
 async def get_blog(blog_id: str, user_id: str = None):
