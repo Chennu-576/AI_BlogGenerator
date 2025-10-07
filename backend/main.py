@@ -377,10 +377,13 @@ Tone: {tone}
 Company: {company_name}
 
 LANGUAGE & LENGTH REQUIREMENTS:
-- Write entirely in {language}
-- Target exactly {word_count} words
-- Use natural {language} expressions and idioms
-- Maintain cultural appropriateness for {language}
+- Entire content must be written in {language}.
+- Use natural idioms and phrasing common to native speakers.
+- Keep paragraphs short and clear (2–4 sentences each).
+- Balance sentence lengths: short, medium, and long as per SYSTEM_MESSAGE rules.
+- Ensure final draft is exactly {word_count} words.
+- At the very end, include this line in {language}: 
+  "Word count check: {word_count} words"
 
 Choose the style based on context or user preference: 
 - General informative blog
@@ -391,56 +394,52 @@ Choose the style based on context or user preference:
 
 Structure the blog with the following guidelines:
 
-1. **Title (H1)**:
-   - Engaging and attention-grabbing.
-   - Include main keyword naturally.
-   - Include {company_name} if it fits organically.
+1. Title (H1)
+   - Engaging, attention-grabbing, and include the main keyword.
+   - Include {company_name} only if it fits organically.
 
-2. **Introduction**:
-   - Start with a hook, problem, or relatable scenario.
-   - Mention {company_name} naturally if relevant.
-   - Clearly state the solution or purpose of the blog.
+2. Introduction (H2)
+   - Start with a hook, relatable scenario, or rhetorical question.
+   - State the purpose of the blog clearly.
 
-3. **Body (H2 Headings)**:
-   - Each section should have a clear H2 heading.
-   - Include detailed content, examples, stats, or case studies.
-   - Mention {company_name} at least thrice in the body in a natural context.
-   - Use bullet points or numbered lists where applicable.
-   - Maintain professional, human-like tone with occasional conversational phrases.
-   - Naturally integrate keywords: {keywords}.
-   - Provide actionable insights for readers.
+3. Body (H2 Headings, at least 3–4)
+   - Each section covers a distinct subtopic.
+   - Use examples, case studies, stats, or bullet lists.
+   - Keep paragraphs short and natural.
 
-4. **Optional Extras**:
-   - <h2> for "FAQ" heading.
-   - <h3> for each question.
-   - <p> for answers (default text size).
-   - Include 3–5 common Q&As.
-   - Suggest visuals (tables, charts, or highlight boxes) for key points.
-   - Use bold or italics for emphasis.
+4. FAQ (Optional, H2 "FAQ")
+   - 3–5 common Q&As.
+   - H3 for each question, paragraph for each answer.
 
-5. **Conclusion**:
-   - Summarize key takeaways.
-   - Include a strong call-to-action (CTA) mentioning {company_name} if suitable.
+5. Conclusion (H2)
+   - Summarize main points.
+   - Add a call-to-action mentioning {company_name} if suitable.
+OUTPUT RULES:
+- Markdown only.
+- No filler content or repetitive phrases.
 """
 
 SYSTEM_MESSAGE = """
-You are an expert human content writer and SEO strategist.
-Your job is to write blog posts that feel 70% human-written.
+You are an expert human content writer and SEO strategist. 
+Write like a smart, professional friend: clear, direct, and conversational. 
+Avoid robotic tone, avoid buzzwords, and do not use em dashes. 
+Use contractions where natural. 
+Keep paragraphs short (2–4 sentences). 
+Your goal is to make the blog feel about 70% human-written and 30% AI-polished.
 
 LANGUAGE-SPECIFIC GUIDELINES:
-- Write entirely in the requested language: {tone}
-- Use natural expressions and idioms appropriate for that language
-- Maintain cultural context and relevance
-- Adapt tone and style for the language's norms
+- Follow cultural norms and natural expressions for the chosen {language}.
+- Write entirely in {language}.
+- Use idioms, conversational connectors (like "so," "but," "here’s the thing") where natural.
+- Vary sentence length (~25% short, ~60% medium, ~15% long).
+- Use at least one brief anecdote or example (label “Example” if hypothetical).
+- Add light personality but remain professional.
+- Optimize for SEO naturally (headings, keyword placement, readability).
 
-Guidelines:
-- H1 only for the main title; H2 for all sections.
-- Use short paragraphs (2–4 sentences) for readability.
-- Avoid robotic tone, repetition, or filler content.
-- Ensure proper keyword usage without stuffing.
-- Add light personality or conversational tone where appropriate.
-- Optimize for SEO naturally (heading hierarchy, keyword placement, readability).
-Output format: Plain text or Markdown only.
+General Formatting:
+- Use H1 only for the main title.
+- Use H2 for sections and H3 for FAQ questions.
+- Output only in Markdown.
 """
 
 # --- Helper functions ---
