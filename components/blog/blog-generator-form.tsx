@@ -108,14 +108,18 @@ function InnerForm({ onBlogGenerated }: BlogGeneratorFormProps) {
       })
 
       if (!response.ok) {
-         let errorMessage = 'Failed to generate blog'
-        try {
-          const errorData = await response.json()
-          errorMessage = errorData.detail || errorData.message || `HTTP error! status: ${response.status}`
-        } catch {
-          errorMessage = `HTTP error! status: ${response.status}`
-        }
-        throw new Error(errorMessage)
+        setError('Server is warming up... Please click "Generate Blog" again. This usually works on the second attempt.')
+        toast('Please try once more - server is starting up')
+      return
+    
+        //  let errorMessage = 'Failed to generate blog'
+        // try {
+        //   const errorData = await response.json()
+        //   errorMessage = errorData.detail || errorData.message || `HTTP error! status: ${response.status}`
+        // } catch {
+        //   errorMessage = `HTTP error! status: ${response.status}`
+        // }
+        // throw new Error(errorMessage)
         // const errMsg = await response.text()
         // throw new Error(errMsg || 'Failed to generate blog')
       }
@@ -123,7 +127,8 @@ function InnerForm({ onBlogGenerated }: BlogGeneratorFormProps) {
       const generatedBlog = await response.json()
       console.log('Generated blog:', generatedBlog)
       if (!generatedBlog || !generatedBlog.id) {
-        throw new Error('Invalid response from server - missing blog data')
+        setError('Blog was generated but there was a small issue. Please try again.')
+        return
       }
       toast.success('Blog generated successfully!')
 
@@ -132,9 +137,9 @@ function InnerForm({ onBlogGenerated }: BlogGeneratorFormProps) {
 
     } catch (err) {
       console.error('Error generating blog:', err)
-      const message = err instanceof Error ? err.message : 'Failed to generate blog'
+      const message =  'First attempt may take longer due to server startup. Please click "Generate Blog" again.'
       setError(message)
-      toast.error(message)
+      toast(message)
     } finally {
       setIsGenerating(false)
     }
@@ -152,7 +157,14 @@ function InnerForm({ onBlogGenerated }: BlogGeneratorFormProps) {
         {error && (
           <Alert variant="destructive" className="mb-4">
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription>
+              {error}
+              <br />
+              <span className="text-sm text-amber-600 mt-1 block">
+        💡        This is normal on free hosting - just try again!
+              </span>
+
+            </AlertDescription>
           </Alert>
         )}
 
