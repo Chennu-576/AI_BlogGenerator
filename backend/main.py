@@ -429,7 +429,7 @@ Your goal is to make the blog feel about 70% human-written and 30% AI-polished.
 
 LANGUAGE-SPECIFIC GUIDELINES:
 - Follow cultural norms and natural expressions for the chosen {language}.
-- Write entirely in {language}.
+- Write entirely in the requested language: {language}.
 - Use idioms, conversational connectors (like "so," "but," "here’s the thing") where natural.
 - Vary sentence length (~25% short, ~60% medium, ~15% long).
 - Use at least one brief anecdote or example (label “Example” if hypothetical).
@@ -584,7 +584,7 @@ async def generate_blog(request: Request):
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",  
             messages=[
-                {"role": "system", "content": SYSTEM_MESSAGE.format(tone=tone)},
+                {"role": "system", "content": SYSTEM_MESSAGE.format(language=language, tone=tone)},
                 {"role": "user", "content": prompt}
             ],
             max_tokens=1500,
