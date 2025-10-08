@@ -108,7 +108,7 @@ function InnerForm({ onBlogGenerated }: BlogGeneratorFormProps) {
       })
 
       if (!response.ok) {
-        setError('Server is warming up... Please click "Generate Blog" again. This usually works on the second attempt.')
+        setError('Server is warming up... wait for 5 mins. Please click "Generate Blog" again. This usually works on the second attempt.')
         toast('Please try once more after 2 mins - server is starting up')
       return
     
