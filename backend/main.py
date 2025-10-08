@@ -583,23 +583,22 @@ async def generate_blog(request: Request):
             if scraped:
                 prompt += f"\n\nUse this as reference:\n{scraped}"
 
-        # OpenAI call - FIXED with GPT-4o-mini
-        # if not client:
-        #     # Fallback if OpenAI not configured
-        #     return {
-        #         "id": "fallback-blog",
-        #         "title": f"{topic} - Blog Post",
-        #         "content": f"This is a comprehensive blog post about {topic}. The content covers key aspects and provides valuable insights for readers.",
-        #         "seo_score": 7,
-        #         "meta_description": f"Learn about {topic} in this detailed blog post",
-        #         "word_count": 300,
-        #         "status": "published"
-        #     }
+                system_content = SYSTEM_MESSAGE.format(
+    topic=topic,
+    company_name=company_name,
+    language=language,
+    word_count=word_count,
+    tone=tone,
+    persona=data.get("persona", ""),
+    primary_keyword=", ".join(keywords) if keywords else "",
+    region_or_vertical=data.get("region_or_vertical", "")
+)
+
 
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",  
             messages=[
-                {"role": "system", "content": SYSTEM_MESSAGE.format(language=language, tone=tone)},
+                {"role": "system", "content": system_content},
                 {"role": "user", "content": prompt}
             ],
             max_tokens=1500,
