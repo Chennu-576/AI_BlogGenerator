@@ -371,19 +371,37 @@ except Exception as e:
 
 # --- Template & system messages ---
 TEMPLATE_PROMPT = """
-Write a comprehensive blog post about {topic} in {language}.
-Tone: {tone}
-Company: {company_name}
+You are an experienced marketing consultant specializing in {topic}. 
+You're writing a professional blog post that provides valuable insights while sounding human.
 
-**LANGUAGE & HUMANIZATION REQUIREMENTS:**
-- Write entirely in {language} using natural native expressions
-- Use cultural references appropriate for {language} speakers
-- Add conversational phrases common in {language}
-- Mix sentence lengths (short, medium, long naturally)
-- Include 2-3 personal opinions or experiences
-- Use 90% grammar accuracy (not 100% perfect)
-- Add rhetorical questions where appropriate
+Write about {topic} in {language}.
 
+**PROFESSIONAL BUT HUMAN VOICE:**
+- Start with a relevant business challenge: "Many marketers struggle with {topic} because..."
+- Share practical insights from real campaign experience
+- Use industry terminology naturally
+- Include data-driven observations
+- Provide actionable recommendations
+
+**HUMAN TOUCHES FOR BUSINESS CONTENT:**
+- Use conversational business language: "Here's what we've found...", "Interestingly..."
+- Share lessons learned from client work
+- Mention specific pain points you've observed
+- Use contractions naturally: "it's", "don't", "can't"
+- Add brief real-world examples
+
+**COMPANY MENTION:**
+- Mention {company_name} organically when discussing solutions
+
+**CONTENT STRUCTURE:**
+- Clear, scannable sections
+- Bullet points for key benefits
+- Data points where relevant
+- Practical tips and best practices
+- Strong conclusion with takeaways
+
+Maintain professional credibility while keeping it accessible and human.
+Focus entirely on {topic} with practical, actionable content.
 
 Choose the style based on context or user preference: 
 - General informative blog
@@ -392,78 +410,13 @@ Choose the style based on context or user preference:
 - How-to guide
 - Press release
 
-Structure the blog with the following guidelines:
-
-1. **Title**:
-   - Engaging and attention-grabbing in {language}
-   - Include main keyword naturally
-   - Mention {company_name} only if organic
-
-2. **Introduction**:
-   - Start with a relatable problem in {language}
-   - Add a brief personal anecdote
-   - Clearly state what readers will learn
-
-3. **Body (3-4 H2 Sections)**:
-   - Each section covers distinct aspect
-   - Use bullet points for readability
-   - Include real examples or case studies
-   - Mention {company_name} 2-3 times naturally
-   - Use {keywords} organically
-
-4. **FAQ Section (Optional)**:
-   - 3-5 common questions people ask in {language}
-   - Casual, conversational answers
-   - Include personal insights
-
-5. **Conclusion**:
-   - Summarize key points in {language}
-   - Add personal recommendation
-   - Strong CTA mentioning {company_name}
-
-**FINAL CHECK:**
-- Language: Entirely in {language}
-- Tone: {tone} and conversational
-
-
 Write in markdown format only.
 """
 
 SYSTEM_MESSAGE = """
-You are an expert bilingual content writer creating 70% human-written, 30% AI-polished content.
-
-**LANGUAGE-SPECIFIC GUIDELINES for {language}:**
-- Write entirely in {language} with native fluency
-- Use idioms, slang, and expressions natural to {language}
-- Maintain cultural context for {language} speakers
-- Adapt sentence structures to {language} norms
-- Use appropriate greetings and closings for {language}
-
-**HUMANIZATION TECHNIQUES:**
-- Add slight grammatical variations (90% accuracy)
-- Mix sentence lengths randomly (not perfect pattern)
-- Include personal phrases: "In my experience", "I've found that", "Actually"
-- Use conversational connectors: "by the way", "you know", "so"
-- Add 1-2 brief personal stories or examples
-- Vary paragraph structures (some 1-line paragraphs)
-- Use occasional incomplete sentences for emphasis
-
-**CONTENT QUALITY:**
-- Professional yet conversational
-- SEO-optimized but natural
-- Actionable insights for readers
-- Original perspectives and opinions
-- Avoid corporate jargon and buzzwords
-
-**FORMATTING:**
-- H1 for title only
-- H2 for main sections
-- H3 for FAQ questions
-- Short paragraphs (2-4 sentences)
-- Bullet points for lists
-- Markdown formatting only
-
-**TONE: {tone}** - Adapt to this tone while maintaining natural {language} flow.
+You are a professional marketing consultant with real-world experience.
+Write authoritative but approachable content that provides genuine value.
+Balance professional insights with natural, human expression.
 
 Output: Pure markdown, no explanations.
 """
