@@ -584,15 +584,15 @@ async def generate_blog(request: Request):
                 prompt += f"\n\nUse this as reference:\n{scraped}"
 
                 system_content = SYSTEM_MESSAGE.format(
-    topic=topic,
-    company_name=company_name,
-    language=language,
-    word_count=word_count,
-    tone=tone,
-    persona=data.get("persona", ""),
-    primary_keyword=", ".join(keywords) if keywords else "",
-    region_or_vertical=data.get("region_or_vertical", "")
-)
+                   topic=topic,
+                   company_name=company_name,
+                   language=language,
+                   word_count=word_count,
+                   tone=tone,
+                   persona=f"Persona: {data.get('persona', 'Marketing professional')}",
+                   primary_keyword=f"Primary keyword: {', '.join(keywords) if keywords else 'Industry terms'}",
+                   region_or_vertical=f"Region/Vertical: {data.get('region_or_vertical', 'General market')}"
+                )
 
 
         response = client.chat.completions.create(
@@ -671,16 +671,6 @@ async def generate_blog(request: Request):
         logger.exception("Unexpected error in /generate-blog")
         raise HTTPException(status_code=500, detail=str(e))
 
-       # Return fallback blog instead of error
-        # return {
-        #     "id": "error-fallback",
-        #     "title": f"{data.get('topic', 'Technology')} - Blog Post",
-        #     "content": f"This blog post discusses {data.get('topic', 'technology')} in detail. Despite a temporary technical issue, the content has been generated successfully.",
-        #     "seo_score": 6,
-        #     "meta_description": f"Comprehensive guide to {data.get('topic', 'technology')}",
-        #     "word_count": 400,
-        #     "status": "published"
-        # }
 
 @app.get("/blogs/{blog_id}")
 async def get_blog(blog_id: str, user_id: str = None):
@@ -727,4 +717,4 @@ async def health_check():
 
 if __name__ == "__main__":
     
-    uvicorn.run(app, host="0.0.0.0", port=10000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
