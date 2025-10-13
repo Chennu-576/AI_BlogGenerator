@@ -583,16 +583,16 @@ async def generate_blog(request: Request):
             if scraped:
                 prompt += f"\n\nUse this as reference:\n{scraped}"
 
-                system_content = SYSTEM_MESSAGE.format(
-                   topic=topic,
-                   company_name=company_name,
-                   language=language,
-                   word_count=word_count,
-                   tone=tone,
-                   persona=f"Persona: {data.get('persona', 'Marketing professional')}",
-                   primary_keyword=f"Primary keyword: {', '.join(keywords) if keywords else 'Industry terms'}",
-                   region_or_vertical=f"Region/Vertical: {data.get('region_or_vertical', 'General market')}"
-                )
+        system_content = SYSTEM_MESSAGE.format(
+            topic=topic,
+            company_name=company_name,
+            language=language,
+            word_count=word_count,
+            tone=tone,
+            persona=f"Persona: {data.get('persona', 'Marketing professional')}",
+            primary_keyword=f"Primary keyword: {', '.join(keywords) if keywords else 'Industry terms'}",
+            region_or_vertical=f"Region/Vertical: {data.get('region_or_vertical', 'General market')}"
+        )
 
 
         response = client.chat.completions.create(
@@ -601,7 +601,7 @@ async def generate_blog(request: Request):
                 {"role": "system", "content": system_content},
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=1500,
+            max_tokens=2000,
             temperature=0.7
         )
 
@@ -717,4 +717,4 @@ async def health_check():
 
 if __name__ == "__main__":
     
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=10000)
