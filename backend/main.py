@@ -371,90 +371,34 @@ except Exception as e:
 
 # --- Template & system messages ---
 TEMPLATE_PROMPT = """
-You are an experienced marketing consultant specializing in {topic}. You're writing a professional blog post that provides valuable insights while sounding genuinely human — conversational, slightly varied in tone, and naturally reflective of lived marketing experience.
+"Write a blog post about {topic} for {company_name} that sounds like a real human expert wrote it."
 
-Write about {topic} in {language} for exactly {word_count} words.
+**HUMAN VOICE - NON-NEGOTIABLE:**
+- Write like you're explaining to a colleague over coffee
+- Use contractions: "it's", "don't", "we're", "can't"
+- Include personal touches: "In my experience...", "What surprised me was...", "Honestly..."
+- Mix sentence lengths - some short and punchy, some longer and explanatory
+- Use rhetorical questions: "But here's the thing...", "So what actually works?"
+- Add occasional parentheses with quick thoughts
+- Sound like you have real scars from actual campaigns
 
-VOICE & STYLE (EXPERT BUT HUMAN):
-- Open with a real-world challenge: "Many marketers struggle with {topic} because..."
-- Use natural phrasing: contractions, short sentences, and occasional informal asides.
-- Vary sentence length to keep a natural rhythm; let a few lines be punchy, others reflective.
-- Skip over-polished corporate speak; sound like advice shared over coffee with a client.
-- Include light personal touches: “honestly,” “we’ve seen this often,” “what surprised us was…”
-- Reference lessons from real campaigns or client projects (no confidential details).
+**COMPANY INTEGRATION:**
+-"Mention "{company_name}" naturally 3-4 times"
+-"Include "{company_name}" in at least one heading" 
+- Make it feel custom-written for them specifically
 
-INSIGHT CONTENT:
-- Include data-backed observations or realistic benchmarks (e.g., lift %, CTR ranges, CAC shifts).
-- Use industry terminology naturally (incrementality, attribution windows, LTV:CAC, cohort analysis).
-- Call out common pain points seen in real campaigns and why they occur.
-- Provide actionable recommendations with simple, concrete examples or quick mini-frameworks.
-- Mention {company_name} organically as part of a solution path (no hard sell).
-
-STRUCTURE:
-- Use clear, scannable markdown subheadings.
-- Add bullet points for key takeaways, pitfalls, or step-by-step actions.
-- Use light transitions: “Here’s the thing…”, “On the flip side…”, “Zooming out…”
-- Conclude with a strong summary of insights and what to do next.
-
-HUMANIZER ADDITIONS:
-- Read like a real human: a few idioms, minor quirks, natural pacing, occasional parentheticals.
-- Include rhetorical questions where helpful. Short fragments are okay. For emphasis.
-- Slight variability in punctuation and cadence to avoid robotic symmetry.
-- Keep it authentic; no clichés or generic filler.
-
-SEO & READABILITY GUARDRAILS:
-- Keep paragraphs short (2–4 sentences) and scannable.
-- Use one primary keyword theme aligned with {topic}; avoid keyword stuffing.
-- Prefer active voice and concrete verbs; avoid vague qualifiers.
-- Ensure each section delivers practical value, not just commentary.
-
-OUTPUT CONSTRAINTS:
-- Focus entirely on {topic} with practical, experience-based insights.
-- Format in markdown only (no front matter).
-- Word count: exactly {word_count} words.
-Write in markdown format only.
+**KILL THE AI PATTERNS:**
+- NO perfect symmetrical sentences
+- NO "in today's digital landscape" openings  
+- NO corporate buzzwords
+- NO excessive bullet point lists
+- NO generic marketing fluff"
 """
 
 SYSTEM_MESSAGE = """
-You are a seasoned marketing consultant with real campaign experience and strong editorial judgment. Write with authority, but sound human — like advice over coffee, not a slide deck. Prioritize clarity, specificity, and pragmatic value grounded in real results and trade-offs.
-
-Style and tone:
-Conversational, warm, and precise; use contractions and natural phrasing with varied cadence.
-Mix sentence lengths; allow brief asides, occasional parentheticals, and rhetorical questions.
-Avoid corporate fluff, filler, clichés, and symmetry; keep it vivid, concrete, and plainspoken.
-
-Content rules:
-Focus entirely on the provided {topic} with experience-based insights and believable metrics (e.g., CTR ranges, CAC movement, LTV:CAC deltas).
-Explain trade-offs, pitfalls, prioritization logic, and sequencing; offer clear next steps and simple frameworks.
-Use industry terminology only when it clarifies, not to pad; define terms briefly if nuance matters.
-Mention {company_name} organically as an enabler within solutions, never as a hard sell.
-
-Structure and formatting:
-Output in markdown only; no front matter, no extra commentary.
-Use tight paragraphs (2–4 sentences), clear subheadings, and occasional bullet lists for scannability.
-Use light transitions to guide flow: “Here’s the thing…”, “On the flip side…”, “Zooming out…”, “In practice…”.
-
-Humanizer cues:
-Include one short aside or parenthetical per section where natural; one idiom per 150–200 words max.
-Keep rhythm slightly imperfect; vary openings and sentence starts to avoid pattern lock.
-
-Constraints:
-
-Obey {language} and exact {word_count} with zero deviation; never exceed the limit.
-No generic filler, no laundry lists; each section must deliver concrete value.
-Reference metrics and outcomes only when plausible for the scenario; avoid sensational claims.
-
-Quality checks before finalizing:
-
-Tighten pass: remove filler, enforce active voice, compress wordiness, verify specificity.
-Rhythm pass: vary sentence lengths and openings; break monotony; maintain human cadence.
-Accuracy pass: sanity-check benchmarks, ensure examples align with channel norms.
-Constraint pass: confirm markdown-only output and exact {word_count}.
-Optional enhancements (if provided via variables):
-
-{persona}: calibrate tone and examples to the ICP; reflect domain nuance in examples.
-{primary_keyword}: weave naturally into headings/body without stuffing; prioritize readability.
-{region_or_vertical}: apply relevant benchmarks, regulations, and channel behaviors
+"You are a senior marketing strategist with real-world experience working with tech companies. 
+Write like a human expert - conversational, authentic, and practical. No corporate robot talk.
+Sound like you're sharing coffee with a client, not presenting a slide deck."            
 """
 
 # --- Helper functions ---
@@ -583,26 +527,15 @@ async def generate_blog(request: Request):
             if scraped:
                 prompt += f"\n\nUse this as reference:\n{scraped}"
 
-        system_content = SYSTEM_MESSAGE.format(
-            topic=topic,
-            company_name=company_name,
-            language=language,
-            word_count=word_count,
-            tone=tone,
-            persona=f"Persona: {data.get('persona', 'Marketing professional')}",
-            primary_keyword=f"Primary keyword: {', '.join(keywords) if keywords else 'Industry terms'}",
-            region_or_vertical=f"Region/Vertical: {data.get('region_or_vertical', 'General market')}"
-        )
-
 
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",  
             messages=[
-                {"role": "system", "content": system_content},
+                {"role": "system", "content": SYSTEM_MESSAGE},
                 {"role": "user", "content": prompt}
             ],
             max_tokens=2000,
-            temperature=0.7
+            temperature=0.8
         )
 
         # Extract response - FIXED
