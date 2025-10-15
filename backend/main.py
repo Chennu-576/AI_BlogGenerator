@@ -371,34 +371,48 @@ except Exception as e:
 
 # --- Template & system messages ---
 TEMPLATE_PROMPT = """
-"Write a blog post about {topic} for {company_name} that sounds like a real human expert wrote it."
+Write a comprehensive blog post about {topic} specifically for {company_name}.
+
+**CONTENT STRUCTURE REQUIREMENTS:**
+- Create a compelling, attention-grabbing title related to {topic}
+- Write 5-6 main sections with clear, engaging subheadings
+- Each section should flow naturally into the next
+- Include practical insights and actionable advice
+- End with a strong conclusion or call-to-action
+
+**COMPANY INTEGRATION:**
+- Naturally mention "{company_name}" 3-4 times throughout
+- Include "{company_name}" in at least one section heading
+- Show how {company_name} provides solutions related to {topic}
+- Make it feel like custom content for {company_name}
 
 **HUMAN VOICE - NON-NEGOTIABLE:**
 - Write like you're explaining to a colleague over coffee
 - Use contractions: "it's", "don't", "we're", "can't"
-- Include personal touches: "In my experience...", "What surprised me was...", "Honestly..."
-- Mix sentence lengths - some short and punchy, some longer and explanatory
+- Include personal observations: "In my experience...", "What I've noticed..."
+- Mix sentence lengths - short punchy ones with longer explanatory ones
 - Use rhetorical questions: "But here's the thing...", "So what actually works?"
-- Add occasional parentheses with quick thoughts
-- Sound like you have real scars from actual campaigns
+- Add occasional casual phrases and real-world examples
 
-**COMPANY INTEGRATION:**
--"Mention "{company_name}" naturally 3-4 times"
--"Include "{company_name}" in at least one heading" 
-- Make it feel custom-written for them specifically
+**DOMAIN FLEXIBILITY:**
+- Adapt to ANY industry: healthcare, tech, education, finance, etc.
+- Use appropriate terminology for the {topic}
+- Provide relevant examples for the domain
+- Maintain professional but conversational tone
 
-**KILL THE AI PATTERNS:**
-- NO perfect symmetrical sentences
-- NO "in today's digital landscape" openings  
-- NO corporate buzzwords
-- NO excessive bullet point lists
-- NO generic marketing fluff"
+**AVOID AI PATTERNS:**
+- No perfect symmetrical sentences
+- No generic "in today's digital landscape" openings
+- No excessive corporate jargon
+- No robotic bullet point lists
+
+Focus on providing genuine value while naturally integrating {company_name} and maintaining proper blog structure for {topic}.
 """
 
 SYSTEM_MESSAGE = """
-"You are a senior marketing strategist with real-world experience working with tech companies. 
-Write like a human expert - conversational, authentic, and practical. No corporate robot talk.
-Sound like you're sharing coffee with a client, not presenting a slide deck."            
+"You are a senior marketing strategist with 10+ years of real-world experience across multiple industries.
+You write like a practical expert who's been in the trenches - conversational, authentic, and value-driven.
+Sound like a human sharing genuine insights, not an AI generating generic content."       
 """
 
 # --- Helper functions ---
