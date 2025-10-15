@@ -374,11 +374,20 @@ TEMPLATE_PROMPT = """
 Write a comprehensive blog post about {topic} specifically for {company_name}.
 
 **CONTENT STRUCTURE REQUIREMENTS:**
-- Create a compelling, attention-grabbing title related to {topic}
-- Write 5-6 main sections with clear, engaging subheadings
+-Title: Create an SEO-optimized, compelling title about {topic} without using "Write a blog on"
+
+- Write 5-6 main sections with **bold, prominent headings** using markdown
 - Each section should flow naturally into the next
 - Include practical insights and actionable advice
-- End with a strong conclusion or call-to-action
+- End with a strong conclusion or "Get Your Free Sample Now" call-to-action
+
+**SEO OPTIMIZATION:**
+- Include primary keywords naturally in headings and content
+- Use related secondary keywords throughout
+- Create meta-description friendly content
+- Ensure good readability with varied sentence lengths
+- Include actionable takeaways for readers
+
 
 **COMPANY INTEGRATION:**
 - Naturally mention "{company_name}" 3-4 times throughout
@@ -406,7 +415,7 @@ Write a comprehensive blog post about {topic} specifically for {company_name}.
 - No excessive corporate jargon
 - No robotic bullet point lists
 
-Focus on providing genuine value while naturally integrating {company_name} and maintaining proper blog structure for {topic}.
+Focus on creating SEO-friendly providing genuine value while naturally integrating {company_name} and maintaining proper blog structure for {topic}.
 """
 
 SYSTEM_MESSAGE = """
