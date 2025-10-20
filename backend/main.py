@@ -27,7 +27,7 @@ app = FastAPI(title="AI Blog Generator API", version="1.0.0")
 # CORS - FIXED
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins
+    allow_origins=["https://aiblog-generated.netlify.app"],  # Allow all origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -71,6 +71,9 @@ VOICE & STYLE:
 - Begin with a **compelling, conversational hook** — a relatable story, honest moment, or surprising observation.
 - Write like a real person, not a corporate writer. Use contractions, natural pauses, and rhythm shifts.
 - Avoid robotic phrases or buzzwords like “advanced algorithms,” “cutting-edge solutions,” or “maximize ROI.”
+- Replace generic descriptions with vivid, simple examples.
+- Avoid repeating the same words or ideas in consecutive paragraphs.
+- Make it feel like a friendly conversation, not a lecture.
 - Let it sound slightly imperfect — like genuine thoughts, not polished marketing copy.
 - Add **mini-scenarios or anecdotes** from real-world experience to make your points believable.
 - Vary sentence length: mix short, punchy lines with longer reflective ones.
@@ -94,6 +97,9 @@ HUMANIZATION TRIGGERS:
 - Occasionally break the flow with conversational pauses or asides.
 - Avoid repetitive sentence starts or mirrored phrasing.
 - Keep emotional tone authentic — like an expert who still sounds human.
+- If possible, use micro-stories (“I once saw a campaign where…”) to ground insights.
+- Use natural transitions instead of fixed templates like “In conclusion” or “To summarize.”
+
 
 SEO & READABILITY:
 - Integrate {topic} smoothly into the content (no keyword stuffing).
@@ -283,7 +289,9 @@ async def generate_blog(request: Request):
             ],
             max_tokens=2000,
             temperature=1.0,
-            top_p=0.8
+            top_p=0.8,
+            presence_penalty=0.6, 
+            frequency_penalty=0.7
         )
 
         # Extract response - FIXED
