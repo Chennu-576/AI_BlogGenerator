@@ -253,6 +253,15 @@ async def generate_blog(request: Request):
         company_url = data.get("company_url")
         user_id = data.get("user_id")
 
+         # ✅ Safely handle template
+        template = data.get("template", None)
+        if template:
+            logger.info(f"Template received: {type(template)}")
+            # You can optionally store or log this template value
+            # If it’s a dict/object, convert to string for safety
+            if isinstance(template, dict):
+                template = str(template)
+
         # Build prompt - FIXED
         prompt = TEMPLATE_PROMPT.format(
             topic=topic,
@@ -269,6 +278,9 @@ async def generate_blog(request: Request):
             scraped = scrape_content_from_url(company_url)
             if scraped:
                 prompt += f"\n\nUse this as reference:\n{scraped}"
+
+        if template:
+            prompt += f"\n\nUse this writing template for style reference:\n{template}"
 
 
         response = client.chat.completions.create(
