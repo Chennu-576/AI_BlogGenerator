@@ -112,16 +112,6 @@ function InnerForm({ onBlogGenerated }: BlogGeneratorFormProps) {
         toast('Please try once more after 2 mins - server is starting up')
       return
     
-        //  let errorMessage = 'Failed to generate blog'
-        // try {
-        //   const errorData = await response.json()
-        //   errorMessage = errorData.detail || errorData.message || `HTTP error! status: ${response.status}`
-        // } catch {
-        //   errorMessage = `HTTP error! status: ${response.status}`
-        // }
-        // throw new Error(errorMessage)
-        // const errMsg = await response.text()
-        // throw new Error(errMsg || 'Failed to generate blog')
       }
 
       const generatedBlog = await response.json()
