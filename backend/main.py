@@ -442,7 +442,7 @@ app = FastAPI(title="AI Blog Generator API", version="1.0.0")
 # CORS - FIXED
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://aiblog-generated.netlify.app"],  # Allow all origins
+    allow_origins=["http://localhost:3000"],  # Allow all origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -509,15 +509,17 @@ Whenever a user gives you a topic and language, you write a blog that sounds gen
 
 **Formatting:**
 - Use markdown headings for structure.
-- Stay close to the provided topic and language.
-- Don’t keyword-stuff — let SEO flow naturally.
-- Aim for emotional, believable, slightly imperfect content.  
+- Add short, descriptive subheadings for smoother section flow.
+- Write naturally with light keyword focus on the main topic (no stuffing).
+- Maintain logical section transitions — intro, middle insights, and a reflective closing.
+- Add small connectors or mini questions between sections for flow (“But here’s what hit me next…”).
+- Ensure full content completion: every idea introduced should have a payoff, story, or small takeaway.
+- Include a quick final reflection that feels open-ended and thoughtful.
 - Output should pass as fully human-written on detectors like Quillbot/ZeroGPT.
+- Maintain SEO readability and cohesiveness — aim for an SEO score of 7/10–8/10 with the {topic} naturally integrated.
 
 **Your task:**  
 Generate a marketing blog article about **{topic}** in **{language}** with natural tone, vivid detail, and a lived-in feel.
-
-
 """
 
 SYSTEM_MESSAGE = """
@@ -534,19 +536,23 @@ Your job: write marketing blogs so real, most will think you lived the story.
 
 **Content Approach**
 - Only write about {topic}, never generalize.  
-- Every paragraph needs either a relatable emotion, a small real-life lesson, or a vivid scene.
+- Each paragraph should deliver emotion, lesson, or vivid imagery.
+- Use concise subheadings for SEO segment flow (Intro, Story, Tips, Reflection).
 - If giving steps or tips, use a short list — with human explanations (“Step 2 is where I used to mess up. Every time.”)
-- No copy-paste phrasing, mirrored line ends, or “perfect” summary.
-- If you disagree with usual advice, say so — with a little story to explain.
+- Avoid mirrored line endings or formal summaries.
+- Add internal transitions, tie each section with smooth story progression.
+- Ensure complete thought delivery — no incomplete ideas left hanging.
 
-**Humanization Keys**
-- Vary rhythm naturally, sometimes pause, sometimes run on.
-- Use honest asides: “Let’s be real”, “This part no one tells you about…”
-- Add small, believable flaws or tiny struggles.
-- End by inviting reflection or a question — not a final answer.
+**Humanization & SEO Keys**
+- Vary rhythm naturally; pause and run on sometimes.
+- Use honest asides: “Let’s be real”, “Here’s the messy part…”
+- Sprinkle naturally-occurring topic phrases 2–3 times for SEO consistency.
+- Add mini hooks at section starts (“This part surprised me…”).
+- End thoughtfully, not perfectly — with a feeling or question.
+- Make it authentic, emotional, and detection-proof for Quillbot/ZeroGPT.
 
-You should sound like a person telling their friend “here’s how it really went.”  
-Make everything readable, honest, and emotionally varied. (And pass AI detectors every time.)
+You should sound like you’re talking to a friend who asked, “what really happened?”  
+Your goal: produce content with high human % in quillbolt & zerogpt and SEO flow (7–8/10 average per blog).
 """
 
 # --- Helper functions ---
@@ -596,7 +602,9 @@ def calculate_seo_score(title, content, keywords):
     
     # 2. Content length check (3 points)
     word_count = len(content.split())
-    if word_count >= 1000:
+    if word_count >= 1200:
+        score += 3.5 
+    elif word_count >= 1000:
         score += 3.0
     elif word_count >= 700:
         score += 2.5
@@ -610,12 +618,15 @@ def calculate_seo_score(title, content, keywords):
     # 3. Heading structure check (2 points)
     h1_count = content.count('# ')
     h2_count = content.count('## ')
+    h3_count = content.count('### ')
     
     if h1_count == 1:
         score += 1.0
     if h2_count >= 2:
         score += 1.0
     elif h2_count >= 1:
+        score += 0.5
+    if h3_count >= 1:
         score += 0.5
     
     # 4. Keyword optimization (3 points)
@@ -636,20 +647,29 @@ def calculate_seo_score(title, content, keywords):
                 kw_density = (kw_count / word_count) * 100
                 if 1.0 <= kw_density <= 3.0:
                     keyword_score += 0.3
-                elif kw_density > 0:
+                elif 0 < kw_density < 1.0:
                     keyword_score += 0.1
+                elif kw_density > 5.0:
+                    keyword_score -= 0.5  # penalty
+
     
     score += min(keyword_score, 3.0)  # Max 3 points for keywords
     
     # 5. Content quality bonus (1 point)
     # Check for paragraph structure
     paragraphs = content.split('\n\n')
-    if len(paragraphs) >= 5:
+    if len(paragraphs) >= 7:
         score += 0.5
     
     # Check for list items (bullet points)
     if '- ' in content or '* ' in content:
         score += 0.5
+    if '![' in content:
+        score += 0.5,
+    if 'http' in content or 'www.' in content:
+        score += 0.5
+
+    
     
     return min(round(score, 1), max_score)  # Return rounded score
 
@@ -868,4 +888,4 @@ async def health_check():
     return {"status": "healthy", "message": "API running"}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=10000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
