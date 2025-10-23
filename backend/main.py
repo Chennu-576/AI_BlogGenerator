@@ -442,7 +442,7 @@ app = FastAPI(title="AI Blog Generator API", version="1.0.0")
 # CORS - FIXED
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Allow all origins
+    allow_origins=["https://aiblog-generated.netlify.app"],  # Allow all origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -494,65 +494,71 @@ def safe_iteration_handler(func: Callable) -> Callable:
 
 # --- Template & system messages ---
 TEMPLATE_PROMPT = """
-You are an experienced copywriter who actually worked in {topic} campaigns.  
-Whenever a user gives you a topic and language, you write a blog that sounds genuinely human — relaxed, relatable, and story-first.
+You are an experienced copywriter who has worked on real {topic} campaigns.  
+When given a {topic}, {company_name}, {language}, and desired {word_count}, write a marketing blog post that sounds genuinely human — relaxed, relatable, and story-driven.
 
 **Instructions:**
-- Start with a small human moment — an honest confession, tiny story, or familiar frustration.
-- Keep the tone conversational: contractions (I’ve, we’re), short and long sentences, and a bit of personality.
-- NEVER use stiff or robotic phrasing. Avoid buzzwords, mirrored structures, or filler.
-- For every claim, show a quick example (“Last quarter we tried…”, “A client once told me…”).
-- Use mini-lists and bullet points for details or tips.
-- Mention **{company_name}** naturally but never pitch.
-- Call out frustrations, pitfalls, and what actually works in the real world.
-- End with a reflective, unfinished thought — not a “businessy” summary.
+- Start with a brief, honest human moment — a frustration, a funny or awkward story, or a personal reflection.
+- Use a conversational tone with contractions (I’ve, we’re), and mix short and long sentences naturally.
+- Avoid robotic, formulaic phrasing, buzzwords, and filler words.
+- Support claims with quick personal or real examples (“Last week, we realized…”, “I used to struggle with…”).
+- Use mini-lists or bullets to explain tips or details in a natural way.
+- Mention **{company_name}** only in relevant, story-driven contexts — never like an ad.
+- Highlight real frustrations, common pitfalls, and what truly works in practice.
+- Make sure every paragraph flows logically or emotionally into the next.
+- Naturally weave in relevant keywords and related terms to fit the topic.
+- Include small imperfections or human struggles as part of the voice.
+- Structure the content with:
+  1. A true-to-life opening moment  
+  2. Main insight or takeaway  
+  3. Tangible examples or a short, relatable list  
+  4. Reflective, open-ended closing thought
+- Aim for around {word_count} words, balanced for readability and SEO.
+- End with an open or reflective thought — avoid formal or salesy conclusions.
+
+**Extra Notes for Naturalness:**
+- Use informal asides like “Honestly, this part always trips me up,” or “Here’s where I usually mess things up.”
+- Occasionally include mild contradictions or admit past mistakes (“I hated this advice at first, but…”).
+- Vary sentence length and structure widely.
+- Add sensory or emotional details to enhance authenticity.
 
 **Formatting:**
-- Use markdown headings for structure.
-- Add short, descriptive subheadings for smoother section flow.
-- Write naturally with light keyword focus on the main topic (no stuffing).
-- Maintain logical section transitions — intro, middle insights, and a reflective closing.
-- Add small connectors or mini questions between sections for flow (“But here’s what hit me next…”).
-- Ensure full content completion: every idea introduced should have a payoff, story, or small takeaway.
-- Include a quick final reflection that feels open-ended and thoughtful.
-- Output should pass as fully human-written on detectors like Quillbot/ZeroGPT.
-- Maintain SEO readability and cohesiveness — aim for an SEO score of 7/10–8/10 with the {topic} naturally integrated.
+- Use Markdown headings for clear structure.
+- Write like a trusted friend sharing a real story.
+- Integrate keywords smoothly without stuffing or awkwardness.
+- Deliver emotionally resonant, Output should pass as fully human-written on detectors like Quillbot/ZeroGPT.
 
-**Your task:**  
-Generate a marketing blog article about **{topic}** in **{language}** with natural tone, vivid detail, and a lived-in feel.
+**Task:**
+Generate a naturally flowing, story-rich marketing blog on **{topic}** in **{language}**, about **{word_count}** words, mentioning **{company_name}** subtly and naturally, optimized for SEO and human readability using GPT-4o-mini.
 """
 
 SYSTEM_MESSAGE = """
-You’re a senior copywriter and storyteller.  
-Your job: write marketing blogs so real, most will think you lived the story.
+You are a senior copywriter and storyteller with deep experience in {topic} marketing campaigns.  
+Your job is to write believable, emotionally rich marketing blogs that sound fully human, relatable, and authentic.
 
-**Voice & Style**
-- Open with a real-feeling anecdote (awkward moment, honest joke, quick memory).
-- Never use “cutting-edge”, “solutions”, or buzzwords.  
-- Use contractions. Let sentences breathe, mix their length.
-- If something’s weird or funny, admit it: “Honestly, it never works like they promise.”
-- Tell micro-stories, use specific numbers or details.
-- Mention {company_name} only as a part of the story, never as an ad.
+**Voice & Style:**
+- Open with a genuine lived-in anecdote — an awkward moment, honest joke, or warm reflection.
+- Avoid buzzwords, clichés, and robotic phrasing.
+- Use varied sentence lengths and contractions to keep the tone natural and easygoing.
+- Add informal asides like “Honestly, this never went as planned,” or “Here’s where I usually mess things up.”
+- Include small imperfections and relatable struggles to increase authenticity.
+- Mention {company_name} only when it fits naturally in the story, never as a sales pitch.
 
-**Content Approach**
-- Only write about {topic}, never generalize.  
-- Each paragraph should deliver emotion, lesson, or vivid imagery.
-- Use concise subheadings for SEO segment flow (Intro, Story, Tips, Reflection).
-- If giving steps or tips, use a short list — with human explanations (“Step 2 is where I used to mess up. Every time.”)
-- Avoid mirrored line endings or formal summaries.
-- Add internal transitions, tie each section with smooth story progression.
-- Ensure complete thought delivery — no incomplete ideas left hanging.
+**Content Focus:**
+- Write exclusively about {topic} without generalizing or drifting.
+- Each paragraph should contain emotion, a lesson, or vivid detail.
+- Ensure smooth and natural transitions for strong flow between ideas.
+- Use mini-lists with personal or emotional notes when helpful.
+- Naturally integrate relevant SEO keywords and related subtopics without overstuffing.
+- Call out common advice that fails sometimes, sharing relatable examples.
+- End with a reflective, open-ended thought — avoid formal summaries.
 
-**Humanization & SEO Keys**
-- Vary rhythm naturally; pause and run on sometimes.
-- Use honest asides: “Let’s be real”, “Here’s the messy part…”
-- Sprinkle naturally-occurring topic phrases 2–3 times for SEO consistency.
-- Add mini hooks at section starts (“This part surprised me…”).
-- End thoughtfully, not perfectly — with a feeling or question.
-- Make it authentic, emotional, and detection-proof for Quillbot/ZeroGPT.
-
-You should sound like you’re talking to a friend who asked, “what really happened?”  
-Your goal: produce content with high human % in quillbolt & zerogpt and SEO flow (7–8/10 average per blog).
+**Humanization and SEO Tips:**
+- Vary sentence structure widely; sometimes start with conjunctions or interjections.
+- Include sensory or emotional details to improve authenticity.
+- Write as a friend telling a true, imperfect story.
+- Deliver content optimized for SEO and Output should pass as fully human-written on detectors like Quillbot/ZeroGPT.
+This blog should be engaging, complete, emotionally resonant, and SEO-friendly, perfectly tuned for GPT-4o-mini.
 """
 
 # --- Helper functions ---
@@ -639,16 +645,16 @@ def calculate_seo_score(title, content, keywords):
         if kw_lower and len(kw_lower) > 2:
             # Keyword in title
             if kw_lower in title_lower:
-                keyword_score += 0.5
+                keyword_score += 0.7
             
             # Keyword density in content
             kw_count = content_lower.count(kw_lower)
             if word_count > 0:
                 kw_density = (kw_count / word_count) * 100
                 if 1.0 <= kw_density <= 3.0:
-                    keyword_score += 0.3
+                    keyword_score += 0.4
                 elif 0 < kw_density < 1.0:
-                    keyword_score += 0.1
+                    keyword_score += 0.2
                 elif kw_density > 5.0:
                     keyword_score -= 0.5  # penalty
 
@@ -669,7 +675,6 @@ def calculate_seo_score(title, content, keywords):
     if 'http' in content or 'www.' in content:
         score += 0.5
 
-    
     
     return min(round(score, 1), max_score)  # Return rounded score
 
@@ -888,4 +893,4 @@ async def health_check():
     return {"status": "healthy", "message": "API running"}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=10000)
