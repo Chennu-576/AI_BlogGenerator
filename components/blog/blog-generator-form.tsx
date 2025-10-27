@@ -136,32 +136,203 @@ function InnerForm({ onBlogGenerated }: BlogGeneratorFormProps) {
   }
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-blue-600" /> AI Blog Generator
-        </CardTitle>
-        <CardDescription>Create SEO-optimized blog content with AI</CardDescription>
+  //   <Card className="w-full max-w-2xl mx-auto">
+  //     <CardHeader>
+  //       <CardTitle className="flex items-center gap-2">
+  //         <Sparkles className="w-5 h-5 text-blue-600" /> AI Blog Generator
+  //       </CardTitle>
+  //       <CardDescription>Create SEO-optimized blog content with AI</CardDescription>
+  //     </CardHeader>
+  //     <CardContent>
+  //       {error && (
+  //         <Alert variant="destructive" className="mb-4">
+  //           <AlertCircle className="h-4 w-4" />
+  //           <AlertDescription>
+  //             {error}
+  //             <br />
+  //             <span className="text-sm text-amber-600 mt-1 block">
+  //       💡        This is normal on free hosting - just try again!
+  //             </span>
+
+  //           </AlertDescription>
+  //         </Alert>
+  //       )}
+
+  //       <form onSubmit={handleSubmit} className="space-y-4">
+  //         <div className="grid gap-4 md:grid-cols-2">
+  //           <div className="space-y-2">
+  //             <Label htmlFor="topic">Blog Topic *</Label>
+  //             <Input
+  //               id="topic"
+  //               value={formData.topic}
+  //               onChange={e => setFormData({ ...formData, topic: e.target.value })}
+  //               placeholder="Enter your blog topic..."
+  //               required
+  //               disabled={isGenerating}
+  //             />
+  //           </div>
+  //           <div className="space-y-2">
+  //             <Label htmlFor="companyName">Company Name</Label>
+  //             <Input
+  //               id="companyName"
+  //               value={formData.companyName}
+  //               onChange={e => setFormData({ ...formData, companyName: e.target.value })}
+  //               placeholder="Optional"
+  //               disabled={isGenerating}
+  //             />
+  //           </div>
+  //         </div>
+
+  //         <div className="space-y-2">
+  //           <Label htmlFor="keywords">Keywords (comma-separated)</Label>
+  //           <Input
+  //             id="keywords"
+  //             value={formData.keywords}
+  //             onChange={e => setFormData({ ...formData, keywords: e.target.value })}
+  //             placeholder="SEO, blog, marketing"
+  //             disabled={isGenerating}
+  //           />
+  //         </div>
+
+  //         <div className="grid gap-4 md:grid-cols-2">
+  //           <div className="space-y-2">
+  //             <Label>Template</Label>
+  //             <Select
+  //               value={formData.template}
+  //               onValueChange={val => setFormData({ ...formData, template: val })}
+  //               disabled={isGenerating}
+  //             >
+  //               <SelectTrigger><SelectValue /></SelectTrigger>
+  //               <SelectContent>
+  //                 {templates.map(t => (
+  //                   <SelectItem key={t.id} value={t.id}>
+  //                     <div className="font-medium">{t.name}</div>
+  //                     <div className="text-sm text-gray-500">{t.description}</div>
+  //                   </SelectItem>
+  //                 ))}
+  //               </SelectContent>
+  //             </Select>
+  //           </div>
+
+  //           <div className="space-y-2">
+  //             <Label>Language</Label>
+  //             <Select
+  //               value={formData.language}
+  //               onValueChange={val => setFormData({ ...formData, language: val })}
+  //               disabled={isGenerating}
+  //             >
+  //               <SelectTrigger><SelectValue /></SelectTrigger>
+  //               <SelectContent>
+  //                 {languages.map(l => <SelectItem key={l} value={l}>{l}</SelectItem>)}
+  //               </SelectContent>
+  //             </Select>
+  //           </div>
+  //         </div>
+
+  //         <div className="grid gap-4 md:grid-cols-2">
+  //           <div className="space-y-2">
+  //             <Label>Tone</Label>
+  //             <Select
+  //               value={formData.tone}
+  //               onValueChange={val => setFormData({ ...formData, tone: val })}
+  //               disabled={isGenerating}
+  //             >
+  //               <SelectTrigger><SelectValue /></SelectTrigger>
+  //               <SelectContent>
+  //                 <SelectItem value="professional">Professional</SelectItem>
+  //                 <SelectItem value="casual">Casual</SelectItem>
+  //                 <SelectItem value="friendly">Friendly</SelectItem>
+  //                 <SelectItem value="authoritative">Authoritative</SelectItem>
+  //                 <SelectItem value="conversational">Conversational</SelectItem>
+  //               </SelectContent>
+  //             </Select>
+  //           </div>
+  //           <div className="space-y-2">
+  //             <Label>Word Count</Label>
+  //             <Select
+  //               value={formData.wordCount}
+  //               onValueChange={val => setFormData({ ...formData, wordCount: val })}
+  //               disabled={isGenerating}
+  //             >
+  //               <SelectTrigger><SelectValue /></SelectTrigger>
+  //               <SelectContent>
+  //                 <SelectItem value="500">500 words</SelectItem>
+  //                 <SelectItem value="800">800 words</SelectItem>
+  //                 <SelectItem value="1200">1,200 words</SelectItem>
+  //                 <SelectItem value="1500">1,500 words</SelectItem>
+  //                 <SelectItem value="2000">2,000 words</SelectItem>
+  //               </SelectContent>
+  //             </Select>
+  //           </div>
+  //         </div>
+
+  //         <div className="flex gap-2 mb-4">
+  //           <Badge variant="secondary"><FileText className="w-3 h-3 mr-1" />AI-Generated</Badge>
+  //           <Badge variant="secondary"><Target className="w-3 h-3 mr-1" />SEO-Optimized</Badge>
+  //         </div>
+
+  //         <Button type="submit" disabled={isGenerating || !formData.topic.trim()} className="w-full">
+  //           {isGenerating ? (
+  //             <>
+  //               <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating Blog...
+  //             </>
+  //           ) : (
+  //             <>
+  //               <Sparkles className="mr-2 h-4 w-4" /> Generate Blog
+  //             </>
+  //           )}
+  //         </Button>
+  //       </form>
+  //     </CardContent>
+  //   </Card>
+  // )
+  
+    <Card className="w-full max-w-2xl mx-auto border-0 shadow-2xl rounded-2xl overflow-hidden bg-gradient-to-br from-white to-blue-50/30">
+      <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white pb-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-3 text-2xl font-bold">
+              <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
+              AI Blog Generator
+            </CardTitle>
+            <CardDescription className="text-blue-100 mt-2 text-base">
+              Create SEO-optimized blog content with AI
+            </CardDescription>
+          </div>
+          <div className="flex gap-2">
+            <Badge variant="secondary" className="bg-white/20 text-white border-0 backdrop-blur-sm">
+              <FileText className="w-3 h-3 mr-1" />AI-Generated
+            </Badge>
+            <Badge variant="secondary" className="bg-white/20 text-white border-0 backdrop-blur-sm">
+              <Target className="w-3 h-3 mr-1" />SEO-Optimized
+            </Badge>
+          </div>
+        </div>
       </CardHeader>
-      <CardContent>
+      
+      <CardContent className="p-6">
         {error && (
-          <Alert variant="destructive" className="mb-4">
+          <Alert variant="destructive" className="mb-6 rounded-lg border-l-4 border-l-red-500 bg-red-50">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
               {error}
               <br />
               <span className="text-sm text-amber-600 mt-1 block">
-        💡        This is normal on free hosting - just try again!
+                💡 This is normal on free hosting - just try again!
               </span>
-
             </AlertDescription>
           </Alert>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="topic">Blog Topic *</Label>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-3">
+              <Label htmlFor="topic" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                Blog Topic *
+              </Label>
               <Input
                 id="topic"
                 value={formData.topic}
@@ -169,43 +340,57 @@ function InnerForm({ onBlogGenerated }: BlogGeneratorFormProps) {
                 placeholder="Enter your blog topic..."
                 required
                 disabled={isGenerating}
+                className="h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-xl transition-all duration-200"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="companyName">Company Name</Label>
+            <div className="space-y-3">
+              <Label htmlFor="companyName" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                Company Name
+              </Label>
               <Input
                 id="companyName"
                 value={formData.companyName}
                 onChange={e => setFormData({ ...formData, companyName: e.target.value })}
                 placeholder="Optional"
                 disabled={isGenerating}
+                className="h-12 border-gray-300 focus:border-green-500 focus:ring-green-500 rounded-xl"
               />
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="keywords">Keywords (comma-separated)</Label>
+          <div className="space-y-3">
+            <Label htmlFor="keywords" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+              <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
+              Keywords (comma-separated)
+            </Label>
             <Input
               id="keywords"
               value={formData.keywords}
               onChange={e => setFormData({ ...formData, keywords: e.target.value })}
               placeholder="SEO, blog, marketing"
               disabled={isGenerating}
+              className="h-12 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-xl"
             />
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label>Template</Label>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-3">
+              <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                Template
+              </Label>
               <Select
                 value={formData.template}
                 onValueChange={val => setFormData({ ...formData, template: val })}
                 disabled={isGenerating}
               >
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
+                <SelectTrigger className="h-12 border-gray-300 focus:border-orange-500 focus:ring-orange-500 rounded-xl">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl">
                   {templates.map(t => (
-                    <SelectItem key={t.id} value={t.id}>
+                    <SelectItem key={t.id} value={t.id} className="py-3">
                       <div className="font-medium">{t.name}</div>
                       <div className="text-sm text-gray-500">{t.description}</div>
                     </SelectItem>
@@ -214,31 +399,41 @@ function InnerForm({ onBlogGenerated }: BlogGeneratorFormProps) {
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label>Language</Label>
+            <div className="space-y-3">
+              <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <div className="w-2 h-2 bg-cyan-600 rounded-full"></div>
+                Language
+              </Label>
               <Select
                 value={formData.language}
                 onValueChange={val => setFormData({ ...formData, language: val })}
                 disabled={isGenerating}
               >
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
+                <SelectTrigger className="h-12 border-gray-300 focus:border-cyan-500 focus:ring-cyan-500 rounded-xl">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl max-h-60">
                   {languages.map(l => <SelectItem key={l} value={l}>{l}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label>Tone</Label>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-3">
+              <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
+                Tone
+              </Label>
               <Select
                 value={formData.tone}
                 onValueChange={val => setFormData({ ...formData, tone: val })}
                 disabled={isGenerating}
               >
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
+                <SelectTrigger className="h-12 border-gray-300 focus:border-pink-500 focus:ring-pink-500 rounded-xl">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl">
                   <SelectItem value="professional">Professional</SelectItem>
                   <SelectItem value="casual">Casual</SelectItem>
                   <SelectItem value="friendly">Friendly</SelectItem>
@@ -247,15 +442,20 @@ function InnerForm({ onBlogGenerated }: BlogGeneratorFormProps) {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label>Word Count</Label>
+            <div className="space-y-3">
+              <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <div className="w-2 h-2 bg-indigo-600 rounded-full"></div>
+                Word Count
+              </Label>
               <Select
                 value={formData.wordCount}
                 onValueChange={val => setFormData({ ...formData, wordCount: val })}
                 disabled={isGenerating}
               >
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
+                <SelectTrigger className="h-12 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl">
                   <SelectItem value="500">500 words</SelectItem>
                   <SelectItem value="800">800 words</SelectItem>
                   <SelectItem value="1200">1,200 words</SelectItem>
@@ -266,24 +466,28 @@ function InnerForm({ onBlogGenerated }: BlogGeneratorFormProps) {
             </div>
           </div>
 
-          <div className="flex gap-2 mb-4">
-            <Badge variant="secondary"><FileText className="w-3 h-3 mr-1" />AI-Generated</Badge>
-            <Badge variant="secondary"><Target className="w-3 h-3 mr-1" />SEO-Optimized</Badge>
+          <div className="pt-4 border-t border-gray-200">
+            <Button 
+              type="submit" 
+              disabled={isGenerating || !formData.topic.trim()} 
+              className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] disabled:transform-none"
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
+                  <span className="text-base">Generating Blog...</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="mr-2 h-4 w-4" /> 
+                  <span className="text-base">Generate Blog</span>
+                </>
+              )}
+            </Button>
           </div>
-
-          <Button type="submit" disabled={isGenerating || !formData.topic.trim()} className="w-full">
-            {isGenerating ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating Blog...
-              </>
-            ) : (
-              <>
-                <Sparkles className="mr-2 h-4 w-4" /> Generate Blog
-              </>
-            )}
-          </Button>
         </form>
       </CardContent>
     </Card>
   )
 }
+
