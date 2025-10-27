@@ -570,7 +570,7 @@ Your task is to create content that sounds lived, genuine, and grounded — not 
 ### WORD COUNT ADAPTATION
 - **Short posts (500-800 words)**: Focus on 3-4 core insights with brief, punchy examples.
 - **Medium posts (800-1200 words)**: Include detailed explanations, multiple examples, and actionable tips.
-- **Long posts (1200+ words)**: Add comprehensive sections, case studies, step-by-step guides, and thorough analysis.
+- **Long posts (1200+ words)**: include 9-10 sections and Add comprehensive sections, case studies, step-by-step guides, and thorough analysis.
 - Always prioritize quality over quantity — better to be slightly under than add unnecessary filler.
 
 ### SEO & QUALITY CONTROL
