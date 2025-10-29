@@ -50,6 +50,7 @@ function InnerForm({ onBlogGenerated }: BlogGeneratorFormProps) {
     template: 'general',
     language: 'English',
     keywords: '',
+    additionalDetails: '',
     tone: 'professional',
     wordCount: '800',
     sampleBlog: '',
@@ -373,6 +374,23 @@ function InnerForm({ onBlogGenerated }: BlogGeneratorFormProps) {
               className="h-12 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-xl"
             />
           </div>
+          {/* ----------- Additional Details Textarea Here ----------- */}
+          <div className="space-y-3">
+            <Label htmlFor="additionalDetails" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+              <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+              Additional Details
+            </Label>
+            <textarea
+              id="additionalDetails"
+              value={formData.additionalDetails}
+              onChange={e => setFormData({ ...formData, additionalDetails: e.target.value })}
+              placeholder="Enter any extra requirements, points, or references for blog generation..."
+              rows={4}
+              disabled={isGenerating}
+              className="w-full border border-gray-300 focus:border-gray-500 focus:ring-gray-500 rounded-xl px-4 py-3 transition-all duration-200"
+            />
+          </div>
+    
 
           <div className="grid gap-6 md:grid-cols-2">
             <div className="space-y-3">

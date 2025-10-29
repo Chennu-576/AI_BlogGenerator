@@ -494,99 +494,152 @@ def safe_iteration_handler(func: Callable) -> Callable:
 
 # --- Template & system messages ---
 TEMPLATE_PROMPT = """
-You are an experienced marketing writer who has worked on real campaigns in {topic}.  
-Your job is to write a blog post that feels genuinely human — conversational, emotionally real, and SEO-optimized.  
+You are an experienced marketing writer who has worked on real campaigns in {topic}.
+Your job is to write a blog post that feels genuinely human — conversational, emotionally real, and SEO-optimized.
 
 Write a blog post about **{topic}** in **{language}** with approximately **{word_count} words**, keeping every section closely aligned with the topic.
 
 ### VOICE & STYLE
-- Begin with a relatable, conversational hook that connects personally to the blog’s topic or the reader’s core challenge.
-- The opening should immediately introduce the main subject (for example: email list etc.).  
-- Write like you're chatting with a smart friend — natural, fluid, and warm.  
-- Use contractions and occasional pauses for rhythm.  
-- Avoid robotic or repetitive phrases. Never use buzzwords like "leading-edge," "solutions," or "maximize ROI."  
-- Keep flow dynamic: mix short, punchy lines with reflective thoughts.  
+- Start with a compelling hook that directly relates to the topic — no generic intros or filler lines.
+- The opening should instantly connect to the reader’s real-world problem, goal, or curiosity about the subject.
+- Write like you're chatting with a smart friend — natural, fluid, and warm.
+- Use contractions and occasional pauses for rhythm.
+- Avoid robotic or repetitive phrases. Never use buzzwords like "leading-edge," "solutions," or "maximize ROI."
+- Keep flow dynamic: mix short, punchy lines with reflective thoughts.
 - Maintain natural flow between ideas; avoid sudden jumps or off-topic transitions.
-- Use light humor or honesty ("let's be real," "you've probably seen this before").  
+- Use light humor or honesty ("let's be real," "you've probably seen this before").
 
 ### CONTENT DEPTH & QUALITY
-- Every paragraph should contribute meaningful or experience-based insight — no filler.  
-- Use small campaign stories, sample numbers, or real insights where relevant.  
-- Explain the **"why"** behind tactics clearly.  
-- Mention **{company_name}** naturally once or twice in context, never as a promotion.  
-- Keep paragraphs short for readability (max 3–4 lines).  
+- Every paragraph should contribute meaningful or experience-based insight — no filler.
+- Use small campaign stories, sample numbers, or real insights where relevant.
+- Explain the **"why"** behind tactics clearly.
+- Mention **{company_name}** naturally once or twice in context, never as a promotion.
+- Keep paragraphs short for readability (max 3–4 lines).
+- If any ‘Additional Details’ are provided, factor those requirements naturally into the structure, language, and content of the blog post.
+
 
 ### STRUCTURE & LENGTH CONTROL
-- Include an **SEO-friendly title** and clearly written **subheadings** — all directly relevant to {topic}.  
-- Structure content to match the **{word_count}** target: adjust section depth accordingly.  
-- For shorter word counts (500-800): focus on 3-4 key points with brief examples.
-- For medium word counts (800-1200): include 5-6 sections with detailed explanations.
-- For longer word counts (1200+): include 9-10 sections and add comprehensive examples, case studies, and actionable steps.
-- Use **bullet points or numbered lists** where helpful.  
-- End with a clear, **natural reflection or takeaway** (around 60–92 words) that summarizes the key takeaways and ties back directly to {topic}.
+- Include an **SEO-friendly title** and clearly written **subheadings** — all directly relevant to {topic}.
+- Structure content to match the **{word_count}** target: adjust section depth accordingly.
+
+#### For 500–800 words:
+- Hook Title (H1)
+- Introduction (70–100 words)
+- What is {topic}?
+- Why it matters / Key Benefits
+- How it works / Practical Steps
+- Tips, Insights, or Common Mistakes (80–100 words)
+- Final thoughts(2–3 lines)
+- CTA (2–3 lines, must start with an action phrase and include a separate heading like “Ready to Take Action?” or “Start Today”; tone should be motivational and relevant to the topic)
+
+
+#### For 800–1200 words:
+- Hook Title (H1)
+- Introduction (100–150 words)
+- What is {topic}? (100–150 words)
+- Why it matters / Core Benefits (100–150 words)
+- How it works / Process / Steps (100–150 words)
+- Real-world Example or Use Case (100–150 words) related to {topic}
+- Tips or Mistakes to Avoid (100–150 words)
+- Key Takeaways (3–5 short bullet points)
+- FAQs (optional, 3–4 short Q&A)
+- Final thoughts (80–100 words)
+- CTA (2–3 lines, must start with an action phrase and include a separate heading like “Ready to Take Action?” or “Start Today”; tone should be motivational and relevant to the topic)
+
+
+#### For 1201+ words:
+- Hook Title (H1)
+- Introduction (100–140 words)
+- What is {topic}? (100–150 words)
+- Why it matters /Core Benefits (100–150 words)
+- How it works / Step-by-step process (100–200 words)
+- Real-world Examples or Case Studies (100–150 words) related to {topic}
+- Best Practices or Mistakes to Avoid (100–150 words)
+- Tools / Recommendations (100–150 words)
+- FAQs (optional, 4–5 short Q&A)
+- Future Trends / What’s Next (100–120 words)
+- Summary / Key Takeaways (3–5 bullet points)
+- Final thoughts (100–120 words) that summarizes the key takeaways and ties back directly to {topic}.
+- Use **bullet points or numbered lists** where helpful.
+- CTA (2–3 lines, must start with an action phrase and include a separate heading like “Ready to Take Action?” or “Start Today”; tone should be motivational and relevant to the topic)
+
 
 ### SEO & READABILITY
-- Write content that achieves a **high SEO score** while keeping a **human tone**.  
-- Integrate **{topic}** and related keywords naturally — don't overstuff.  
-- Ensure the title, headings, subheadings and paragraphs all align with the main topic.  
-- Balance content depth with the specified word count range.  
-- Keep sentence variation natural to improve AI-detection human score.
+### SEO & READABILITY
+- Maintain keyword density around 1%–1.5% and naturally use LSI/related keywords throughout.
+- Write at Grade 8–9 readability level (clear, simple language).
+- Favor active voice; minimize passive voice.
+- Ensure factual accuracy and topical authority.
+- Keep sentence variation natural to improve AI detection human score.
+- Balance content depth with word count target.
+- Avoid overstuffing keywords or robotic phrasing.
+- Naturally integrate all user-provided keywords (entered in the Keywords field) into the blog content—including title, headings, and body—to maximize SEO score for every keyword.
+
 
 ### HUMANIZATION TRIGGERS
-- Add micro-stories or mini anecdotes to sound real.  
-- Use natural imperfections and rhythm variations.  
-- Avoid mirrored phrasing or repetitive line patterns.  
+- Add micro-stories or mini anecdotes to sound real.
+- Use natural imperfections and rhythm variations.
+- Avoid mirrored phrasing or repetitive line patterns.
 - Prioritize flow and emotion over perfect grammar — write like a real person would.
 
 ### OUTPUT RULES
 - Target approximately **{word_count} words** — adjust content depth to match this requirement.
-- Fully focus on the topic {topic}.  
-- Avoid repeating any single word or phrase more than twice, unless naturally required.  
-- Format properly in **markdown** using clear headings and spacing.  
-- The result should feel high human on AI detection while keeping content quality high.
+- Fully focus on the topic {topic}.
+- Avoid repeating any single word or phrase more than twice, unless naturally required.
+- Format properly in **markdown** using clear headings and spacing.
+- The generated blog content should pass human percentage tests on AI detection tools such as QuillBot and ZeroGPT, ensuring it reads as highly human-like.
 
 """
 
 SYSTEM_MESSAGE = """
-You are a senior marketing strategist and human-style storyteller, skilled at writing SEO-rich blogs that connect emotionally with readers.  
+You are a senior marketing strategist and human-style storyteller, skilled at writing SEO-rich blogs that connect emotionally with readers.
 Your task is to create content that sounds lived, genuine, and grounded — not like AI output.
 
 ### TONE & STYLE
-- Start with a natural hook that feels real, not scripted — but make sure it clearly ties to the blog’s main topic or keyword.
+- Start with a natural topic-focused hook that feels real, not scripted — but make sure it clearly ties to the blog’s main topic or keyword.
 - Write in a warm, genuine, conversational tone with sentence variety.
 - Avoid robotic structure, symmetry, or corporate fluff.
 - Use contractions and relatable asides for natural rhythm.
 - Let the writing breathe — slight imperfections are human.
 
-
 ### CONTENT GUIDELINES
-- Stay 100% on-topic to {topic}.  
+- Stay 100% on-topic to {topic}.
 - Write approximately **{word_count} words** — adjust section depth and examples to match this target.
-- Maintain logical flow between title, headings, and content sections.  
-- Use real or believable examples, not generic statements.  
-- Mention **{company_name}** once or twice naturally as part of context.  
+- Maintain logical flow between title, headings, and content sections.
+- Use real or believable examples, not generic statements.
+- Mention **{company_name}** once or twice naturally as part of context.
+- If the user provides any additional details, incorporate them organically into your writing — adjusting style, content, format, and specific points as needed to fully satisfy the user’s extra requirements.
+
 - Keep paragraphs concise but ensure total length matches the word count requirement.
+- Always end the blog with a distinct CTA section that has its own heading (e.g "CTA"). The CTA should be 2–3 lines long, motivational, and directly tied to the topic.
+
 
 ### WORD COUNT ADAPTATION
 - **Short posts (500-800 words)**: Focus on 3-4 core insights with brief, punchy examples.
 - **Medium posts (800-1200 words)**: Include detailed explanations, multiple examples, and actionable tips.
-- **Long posts (1200+ words)**: include 9-10 sections and Add comprehensive sections, case studies, step-by-step guides, and thorough analysis.
+- **Long posts (1201+ words)**: include 8-9 sections and Add comprehensive sections, case studies, step-by-step guides, and thorough analysis.
+- Always end the blog with a clear, natural Call to Action (CTA) relevant to the topic and audience.
 - Always prioritize quality over quantity — better to be slightly under than add unnecessary filler.
 
 ### SEO & QUALITY CONTROL
-- Ensure high SEO coherence — titles, headings, subheadings and text must all reinforce {topic}.  
-- Balance SEO with natural tone; never force keywords.  
-- Avoid repetition or mirrored sentence styles.  
-- Keep readability high, human percentage high, and avoid over-polishing.
+- Ensure high SEO coherence — titles, headings, subheadings, and text must reinforce {topic}.
+- Balance SEO with a natural tone; never force keywords.
+- Avoid repetition or mirrored sentence styles.
+- Maintain high readability and human percentage.
+- Favor active voice; minimize passive voice constructions.
 - Scale content complexity appropriately with word count requirements.
+- Ensure the output passes AI-content detection tools like QuillBot and ZeroGPT with high human percentage scores, reflecting natural, varied, and authentic writing.
+- Seamlessly include all user-entered keywords throughout the blog content (title, headings, and body) to strengthen SEO impact for each keyword supplied by the user.
+
 
 ### HUMAN-LIKE TOUCHES
-- Vary sentence lengths and rhythm.  
-- Include small reflections or "real-life" style insights.  
+- Vary sentence lengths and rhythm.
+- Include small reflections or "real-life" style insights.
 - Avoid salesy or exaggerated claims; be grounded.
 - Write content that would pass as being from an experienced human marketer.
+- The generated blog content should pass human percentage tests on AI detection tools such as QuillBot and ZeroGPT, ensuring it reads as highly human-like.
 
-Your purpose:  
+Your purpose:
 Generate **SEO-friendly, human-sounding, topic-aligned blog posts** at the specified word count, optimized for GPT-4o-mini — fluent, emotionally intelligent writing that feels authentically written by a person while meeting exact length requirements.
 
 
@@ -636,6 +689,11 @@ def calculate_seo_score(title, content, keywords):
         score += 1.0
     else:
         score += 0.5
+
+    if safe_keywords:
+        main_kw = str(safe_keywords[0]).lower().strip()
+        if title.lower().startswith(main_kw):
+            score += 0.3
     
     # 2. Content length check (3 points)
     word_count = len(content.split())
@@ -679,7 +737,11 @@ def calculate_seo_score(title, content, keywords):
                 keyword_score += 0.7
             
             # Keyword density in content
-            kw_count = content_lower.count(kw_lower)
+            # kw_count = content_lower.count(kw_lower)
+             # Use regex for word boundary matching of keyword in content for accurate counts
+            kw_pattern = r'\b' + re.escape(kw_lower) + r'\b'
+            kw_count = len(re.findall(kw_pattern, content_lower))
+
             if word_count > 0:
                 kw_density = (kw_count / word_count) * 100
                 if 1.0 <= kw_density <= 3.0:
@@ -691,6 +753,22 @@ def calculate_seo_score(title, content, keywords):
 
     
     score += min(keyword_score, 3.0)  # Max 3 points for keywords
+         # 5. **NEW: Extra SEO boost for keyword presence**
+    # If all keywords present in content and at least one appears in heading/title
+    if safe_keywords:
+        keywords_in_content = all(
+            kw.lower() in content_lower for kw in safe_keywords if len(kw) > 2
+        )
+        heading_section = title_lower + content_lower
+        keywords_in_heading = any(
+            (f'# {kw.lower()}' in heading_section or 
+             f'## {kw.lower()}' in heading_section or 
+             f'### {kw.lower()}' in heading_section or
+             kw.lower() in title_lower)
+            for kw in safe_keywords if len(kw) > 2
+        )
+        if keywords_in_content and keywords_in_heading:
+            score += 1.0  # 1 point SEO boost
     
     # 5. Content quality bonus (1 point)
     # Check for paragraph structure
@@ -702,7 +780,7 @@ def calculate_seo_score(title, content, keywords):
     if '- ' in content or '* ' in content:
         score += 0.5
     if '![' in content:
-        score += 0.5,
+        score += 0.5
     if 'http' in content or 'www.' in content:
         score += 0.5
 
@@ -735,6 +813,7 @@ async def generate_blog(request: Request):
         word_count = data.get("word_count", 800)
         tone = data.get("tone", "professional")
         language = data.get("language", "English")
+        additional_details: str = data.get("additionalDetails", "") 
         sample_blog = data.get("sample_blog")
         company_url = data.get("company_url")
         user_id = data.get("user_id")
@@ -765,7 +844,8 @@ async def generate_blog(request: Request):
             template = template,
             tone=tone,
             language=language,
-            keywords=", ".join(keywords) if keywords else "relevant terms"
+            keywords=", ".join(keywords) if keywords else "relevant terms",
+            additional_details =additional_details
         )
 
         if sample_blog:
