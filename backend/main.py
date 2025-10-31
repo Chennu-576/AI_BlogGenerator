@@ -565,7 +565,8 @@ Favor active voice; minimize passive voice.
 Ensure factual accuracy and topical authority.
 Keep sentence variation natural to boost AI detection human score.
 Avoid keyword stuffing or robotic phrasing.
-Naturally integrate all user keywords into title, headings, body to maximize SEO.
+Naturally integrate all user-provided keywords (entered in the Keywords field) into the blog content—including title, headings, and body—to maximize SEO score for every keyword.
+
 
 HUMANIZATION TRIGGERS
 Add micro-stories or mini anecdotes to sound real.
@@ -610,11 +611,14 @@ Long posts (1201+ words): comprehensive coverage including case studies, step-by
 Prioritize quality over filler.
 
 SEO & QUALITY CONTROL
-Ensure SEO coherence with keyword-aligned headings and content.
-Blend SEO naturally, avoid keyword stuffing.
-Maintain high readability and human-likeness.
-Favor active voice.
-Content must pass AI content detection tools with high human scores.
+Ensure high SEO coherence — titles, headings, subheadings, and text must reinforce {topic}.
+- Balance SEO with a natural tone; never force keywords.
+- Avoid repetition or mirrored sentence styles.
+- Maintain high readability and human percentage.
+- Favor active voice; minimize passive voice constructions.
+- Scale content complexity appropriately with word count requirements.
+- Ensure the output passes AI-content detection tools like QuillBot and ZeroGPT with good human percentage scores, reflecting natural, varied, and authentic writing.
+- Seamlessly include all user-entered keywords throughout the blog content (title, headings, and body) to strengthen SEO impact for each keyword supplied by the user.
 
 HUMAN-LIKE TOUCHES
 Vary sentence lengths and rhythm.
