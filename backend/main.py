@@ -1007,7 +1007,7 @@ import requests
 import re
 from dotenv import load_dotenv
 from pathlib import Path
-from supabase import create_client, Client
+from supabase import create_client
 from datetime import datetime
 import uvicorn
 import logging
@@ -1033,7 +1033,7 @@ app = FastAPI(title="AI Blog Generator API", version="1.0.0")
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://aiblog-generated.netlify.app/"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -1062,7 +1062,7 @@ except Exception as e:
 
 # Initialize Supabase
 try:
-    supabase: Client = create_client(supabase_url, supabase_service_key) if supabase_url and supabase_service_key else None
+    supabase = create_client(supabase_url, supabase_service_key) if supabase_url and supabase_service_key else None
     if not supabase:
         logger.warning("Supabase client not initialized - credentials missing")
 except Exception as e:
