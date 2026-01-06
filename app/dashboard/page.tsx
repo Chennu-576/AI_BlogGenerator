@@ -69,7 +69,7 @@ export default function DashboardPage() {
             </div>
             
             {/* Templates */}
-            <div className="bg-white rounded-lg border p-6">
+            {/* <div className="bg-white rounded-lg border p-6">
               <h3 className="font-semibold mb-3">Popular Templates</h3>
               <div className="space-y-2">
                 <Link href="/dashboard/templates?type=product-review">
@@ -88,7 +88,7 @@ export default function DashboardPage() {
                   </Button>
                 </Link>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

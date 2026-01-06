@@ -383,10 +383,10 @@ interface BlogGeneratorFormProps {
 
 const templates = [
   { id: 'general', name: 'General Article', description: 'Standard blog post format' },
-  { id: 'product-review', name: 'Product Review', description: 'Detailed product analysis' },
-  { id: 'listicle', name: 'Listicle', description: 'List-based content' },
-  { id: 'press-release', name: 'Press Release', description: 'Company announcements' },
-  { id: 'how-to', name: 'How-to Guide', description: 'Step-by-step tutorials' },
+  // { id: 'product-review', name: 'Product Review', description: 'Detailed product analysis' },
+  // { id: 'listicle', name: 'Listicle', description: 'List-based content' },
+  // { id: 'press-release', name: 'Press Release', description: 'Company announcements' },
+  // { id: 'how-to', name: 'How-to Guide', description: 'Step-by-step tutorials' },
 ]
 
 const languages = [

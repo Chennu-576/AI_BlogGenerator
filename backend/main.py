@@ -1115,7 +1115,7 @@ Keep paragraphs short for readability (max 3–4 lines).
 Incorporate any ‘Additional Details’ naturally into the blog’s structure, language, and style.
 
 STRUCTURE & LENGTH CONTROL
-For 500–800 words:
+For 500 words:
 Hook Title (H1)
 Introduction (70–100 words)
 What is {topic}?
@@ -1125,7 +1125,7 @@ Tips, Insights, or Common Mistakes (80–100 words)
 Final thoughts (2–3 lines)
 CTA (2–3 lines, with a heading like “Ready to Take Action?” or “Start Today”; motivational and on-topic)
 
-For 800–1200 words:
+For 800 words:
 Hook Title (H1)
 Introduction (100–150 words)
 What is {topic}? (100–150 words)
@@ -1138,7 +1138,7 @@ FAQs (optional, 3–4 short Q&A)
 Final thoughts (80–100 words)
 CTA (2–3 lines with own heading)
 
-For 1201+ words:
+For 1200 words:
 Hook Title (H1)
 Introduction (100–140 words)
 What is {topic}? (100–150 words)
@@ -1150,7 +1150,7 @@ Tools / Recommendations (100–150 words)
 FAQs (4–5 short Q&A, optional)
 Future Trends / What’s Next (100–120 words)
 Summary / Key Takeaways (3–5 bullet points)
-Final thoughts (100–120 words), summarizing key takeaways and tying back to {topic}.
+Final thoughts (80–100 words), summarizing key takeaways and tying back to {topic}.
 Use bullet points or numbered lists where helpful.
 CTA (2–3 lines with own heading)
 
@@ -1162,6 +1162,19 @@ Ensure factual accuracy and topical authority.
 Keep sentence variation natural to boost AI detection human score.
 Avoid keyword stuffing or robotic phrasing.
 Naturally integrate all user-provided keywords (entered in the Keywords field) into the blog content—including title, headings, and body—to maximize SEO score for every keyword.
+
+
+SEO MANDATORY (8 rules - FAIL = regenerate):
+ Title: 50-60 chars, starts with main keyword
+ H1: Exactly 1, contains main keyword in first 500 chars
+ H2: 3-5 total, 1 contains keyword variation
+ Keyword density: 1-2% main keyword naturally
+ First 100 words: Main keyword 1-2x
+ Lists: Use - or 1. bullets 2+ times
+ Paragraphs: 8+ short paras (3-4 lines max)
+ Sentences: 15-25 words average
+
+
 
 HUMANIZATION TRIGGERS
 Add micro-stories or mini anecdotes to sound real.
@@ -1262,107 +1275,107 @@ def safe_ensure_list(data: Any) -> list:
         return [str(data)]
 
 
-def calculate_seo_score(title, content, keywords):
-    score = 0.0
-    max_score = 10.0
+# def calculate_seo_score(title, content, keywords):
+#     score = 0.0
+#     max_score = 10.0
 
-    safe_keywords = safe_ensure_list(keywords)
+#     safe_keywords = safe_ensure_list(keywords)
 
-    # 1. Title length (2)
-    title_length = len(title)
-    if 50 <= title_length <= 60:
-        score += 2.0
-    elif 40 <= title_length <= 70:
-        score += 1.0
-    else:
-        score += 0.5
+#     # 1. Title length (2)
+#     title_length = len(title)
+#     if 50 <= title_length <= 60:
+#         score += 2.0
+#     elif 40 <= title_length <= 70:
+#         score += 1.0
+#     else:
+#         score += 0.5
 
-    if safe_keywords:
-        main_kw = str(safe_keywords[0]).lower().strip()
-        if title.lower().startswith(main_kw):
-            score += 0.3
+#     if safe_keywords:
+#         main_kw = str(safe_keywords[0]).lower().strip()
+#         if title.lower().startswith(main_kw):
+#             score += 0.3
 
-    # 2. Content length (3.5 max)
-    word_count = len(content.split())
-    if word_count >= 1200:
-        score += 3.5
-    elif word_count >= 1000:
-        score += 3.0
-    elif word_count >= 700:
-        score += 2.5
-    elif word_count >= 500:
-        score += 2.0
-    elif word_count >= 300:
-        score += 1.5
-    else:
-        score += 0.5
+#     # 2. Content length (3.5 max)
+#     word_count = len(content.split())
+#     if word_count >= 1200:
+#         score += 3.5
+#     elif word_count >= 1000:
+#         score += 3.0
+#     elif word_count >= 700:
+#         score += 2.5
+#     elif word_count >= 500:
+#         score += 2.0
+#     elif word_count >= 300:
+#         score += 1.5
+#     else:
+#         score += 0.5
 
-    # 3. Headings (2+)
-    h1_count = content.count('# ')
-    h2_count = content.count('## ')
-    h3_count = content.count('### ')
+#     # 3. Headings (2+)
+#     h1_count = content.count('# ')
+#     h2_count = content.count('## ')
+#     h3_count = content.count('### ')
 
-    if h1_count == 1:
-        score += 1.0
-    if h2_count >= 2:
-        score += 1.0
-    elif h2_count >= 1:
-        score += 0.5
-    if h3_count >= 1:
-        score += 0.5
+#     if h1_count == 1:
+#         score += 1.0
+#     if h2_count >= 2:
+#         score += 1.0
+#     elif h2_count >= 1:
+#         score += 0.5
+#     if h3_count >= 1:
+#         score += 0.5
 
-    # 4. Keyword optimization (3 + 1 bonus)
-    content_lower = content.lower()
-    title_lower = title.lower()
+#     # 4. Keyword optimization (3 + 1 bonus)
+#     content_lower = content.lower()
+#     title_lower = title.lower()
 
-    keyword_score = 0
-    for kw in safe_keywords:
-        kw_lower = str(kw).lower().strip()
-        if kw_lower and len(kw_lower) > 2:
-            if kw_lower in title_lower:
-                keyword_score += 0.7
+#     keyword_score = 0
+#     for kw in safe_keywords:
+#         kw_lower = str(kw).lower().strip()
+#         if kw_lower and len(kw_lower) > 2:
+#             if kw_lower in title_lower:
+#                 keyword_score += 0.7
 
-            kw_pattern = r'\b' + re.escape(kw_lower) + r'\b'
-            kw_count = len(re.findall(kw_pattern, content_lower))
+#             kw_pattern = r'\b' + re.escape(kw_lower) + r'\b'
+#             kw_count = len(re.findall(kw_pattern, content_lower))
 
-            if word_count > 0:
-                kw_density = (kw_count / word_count) * 100
-                if 1.0 <= kw_density <= 3.0:
-                    keyword_score += 0.4
-                elif 0 < kw_density < 1.0:
-                    keyword_score += 0.2
-                elif kw_density > 5.0:
-                    keyword_score -= 0.5
+#             if word_count > 0:
+#                 kw_density = (kw_count / word_count) * 100
+#                 if 1.0 <= kw_density <= 3.0:
+#                     keyword_score += 0.4
+#                 elif 0 < kw_density < 1.0:
+#                     keyword_score += 0.2
+#                 elif kw_density > 5.0:
+#                     keyword_score -= 0.5
 
-    score += min(keyword_score, 3.0)
+#     score += min(keyword_score, 3.0)
 
-    if safe_keywords:
-        keywords_in_content = all(
-            kw.lower() in content_lower for kw in safe_keywords if len(kw) > 2
-        )
-        heading_section = title_lower + content_lower
-        keywords_in_heading = any(
-            (f'# {kw.lower()}' in heading_section or
-             f'## {kw.lower()}' in heading_section or
-             f'### {kw.lower()}' in heading_section or
-             kw.lower() in title_lower)
-            for kw in safe_keywords if len(kw) > 2
-        )
-        if keywords_in_content and keywords_in_heading:
-            score += 1.0
+#     if safe_keywords:
+#         keywords_in_content = all(
+#             kw.lower() in content_lower for kw in safe_keywords if len(kw) > 2
+#         )
+#         heading_section = title_lower + content_lower
+#         keywords_in_heading = any(
+#             (f'# {kw.lower()}' in heading_section or
+#              f'## {kw.lower()}' in heading_section or
+#              f'### {kw.lower()}' in heading_section or
+#              kw.lower() in title_lower)
+#             for kw in safe_keywords if len(kw) > 2
+#         )
+#         if keywords_in_content and keywords_in_heading:
+#             score += 1.0
 
-    # 5. Content quality bonus (1+)
-    paragraphs = content.split('\n\n')
-    if len(paragraphs) >= 7:
-        score += 0.5
-    if '- ' in content or '* ' in content:
-        score += 0.5
-    if '![' in content:
-        score += 0.5
-    if 'http' in content or 'www.' in content:
-        score += 0.5
+#     # 5. Content quality bonus (1+)
+#     paragraphs = content.split('\n\n')
+#     if len(paragraphs) >= 7:
+#         score += 0.5
+#     if '- ' in content or '* ' in content:
+#         score += 0.5
+#     if '![' in content:
+#         score += 0.5
+#     if 'http' in content or 'www.' in content:
+#         score += 0.5
 
-    return min(round(score, 1), max_score)
+#     return min(round(score, 1), max_score)
 
 
 def generate_meta_description(content, max_length=160):
@@ -1370,6 +1383,42 @@ def generate_meta_description(content, max_length=160):
     first_para = paragraphs[0] if paragraphs else content[:200]
     clean = re.sub(r"[#*`]", "", first_para)
     return clean[:max_length - 3] + "..." if len(clean) > max_length else clean
+
+def calculate_seo_score(title, content, keywords):
+    score = 0.0
+    safe_keywords = safe_ensure_list(keywords)
+    if not safe_keywords: return 5.0
+    
+    main_kw = str(safe_keywords[0]).lower().strip()
+    content_lower = content.lower()
+    word_count = len(content.split())
+    
+    # Title (2pts)
+    if 50 <= len(title) <= 60 and main_kw in title.lower(): score += 2.0
+    elif 40 <= len(title) <= 70 and main_kw in title.lower(): score += 1.5
+    
+    # Length (2pts) - 800 word target
+    if 750 <= word_count <= 1100: score += 2.0
+    elif 600 <= word_count <= 1200: score += 1.5
+    
+    # Structure (2.5pts)
+    h1 = content.count('# ')
+    h2 = content.count('## ')
+    if h1 == 1 and main_kw in content_lower[:500]: score += 1.5
+    if 3 <= h2 <= 5: score += 1.0
+    
+    # Keywords (3pts)
+    kw_count = len(re.findall(r'\b' + re.escape(main_kw) + r'\b', content_lower))
+    density = (kw_count / word_count) * 100 if word_count else 0
+    if 1.0 <= density <= 2.5: score += 3.0
+    elif 0.5 <= density < 1.0: score += 1.5
+    
+    # Quality (1.5pts)
+    if len(re.findall(r'\n\n', content)) >= 8: score += 0.8
+    if any(x in content for x in ['- ', '* ', '1. ']): score += 0.7
+    
+    return min(round(score, 1), 10.0)
+
 
 
 # --- Endpoints ---

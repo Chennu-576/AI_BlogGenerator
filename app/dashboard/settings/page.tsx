@@ -19,10 +19,10 @@ const languages = [
 
 const templates = [
   { id: 'general', name: 'General Article' },
-  { id: 'product-review', name: 'Product Review' },
-  { id: 'listicle', name: 'Listicle' },
-  { id: 'press-release', name: 'Press Release' },
-  { id: 'how-to', name: 'How-to Guide' },
+  // { id: 'product-review', name: 'Product Review' },
+  // { id: 'listicle', name: 'Listicle' },
+  // { id: 'press-release', name: 'Press Release' },
+  // { id: 'how-to', name: 'How-to Guide' },
 ]
 
 export default function SettingsPage() {

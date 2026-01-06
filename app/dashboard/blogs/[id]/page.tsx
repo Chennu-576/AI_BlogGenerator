@@ -96,23 +96,46 @@ export default function BlogViewPage() {
     }
   }
 
+  // const handleStatusToggle = async () => {
+  //   if (!user?.id || !blog) return
+    
+  //   const newStatus = blog.status === 'published' ? 'draft' : 'published'
+    
+  //   try {
+  //     const { data, error } = await blogService.updateBlog(blog.id, { status: newStatus })
+  //     if (data && !error) {
+  //       setBlog(data)
+  //       toast.success(`Blog ${newStatus === 'published' ? 'published' : 'saved as draft'}`)
+  //     } else {
+  //       toast.error('Error updating blog status')
+  //     }
+  //   } catch (error) {
+  //     toast.error('Error updating blog status')
+  //   }
+  // }
+
   const handleStatusToggle = async () => {
-    if (!user?.id || !blog) return
-    
-    const newStatus = blog.status === 'published' ? 'draft' : 'published'
-    
-    try {
-      const { data, error } = await blogService.updateBlog(blog.id, { status: newStatus })
-      if (data && !error) {
-        setBlog(data)
-        toast.success(`Blog ${newStatus === 'published' ? 'published' : 'saved as draft'}`)
-      } else {
-        toast.error('Error updating blog status')
-      }
-    } catch (error) {
-      toast.error('Error updating blog status')
-    }
+  if (!user?.id || !blog) return
+
+  const newStatus = blog.status === 'published' ? 'draft' : 'published'
+
+  try {
+    const updatedBlog = await blogService.updateBlog(blog.id, {
+      status: newStatus
+    })
+
+    setBlog(updatedBlog)
+    toast.success(
+      newStatus === 'published'
+        ? 'Blog published'
+        : 'Saved as draft'
+    )
+  } catch (error) {
+    console.error('Error updating blog status:', error)
+    toast.error('Error updating blog status')
   }
+}
+
 
   if (loading) {
     return (

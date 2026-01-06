@@ -51,19 +51,35 @@ const blogService = {
   },
 
   /** Update a blog */
-  async updateBlog(id: string, updates: BlogUpdate): Promise<{ data: Blog | null; error: any }> {
-    const { data, error } = await supabase
-      .from('blogs')
-      .update({ ...updates, updated_at: new Date().toISOString() })
-      .eq('id', id)
-      .select()
-      .single()
+  // async updateBlog(id: string, updates: BlogUpdate): Promise<{ data: Blog | null; error: any }> {
+  //   const { data, error } = await supabase
+  //     .from('blogs')
+  //     .update({ ...updates, updated_at: new Date().toISOString() })
+  //     .eq('id', id)
+  //     .select()
+  //     .single()
 
-    if (error) {
-      console.error('[blogService.updateBlog] Error:', error)
-    }
-    return { data, error }
-  },
+  //   if (error) {
+  //     console.error('[blogService.updateBlog] Error:', error)
+  //   }
+  //   return { data, error }
+  // },
+
+  async updateBlog(blogId: string, updates: Partial<Blog>) {
+  const { data, error } = await supabase
+    .from('blogs')
+    .update(updates)
+    .eq('id', blogId)
+    .select()
+    .single()
+
+  if (error) {
+    throw error
+  }
+
+  return data
+},
+
 
   /** Delete a blog */
   async deleteBlog(id: string, userId: string): Promise<{ error: any }> {

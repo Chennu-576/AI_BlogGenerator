@@ -66,43 +66,77 @@ export default function BlogEditPage() {
     loadBlog()
   }, [user, blogId, router])
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault()
+  // const handleSave = async (e: React.FormEvent) => {
+  //   e.preventDefault()
     
-    if (!user?.id || !blog) return
+  //   if (!user?.id || !blog) return
     
-    if (!formData.title.trim() || !formData.content.trim()) {
-      toast.error('Please fill in all required fields')
-      return
-    }
+  //   if (!formData.title.trim() || !formData.content.trim()) {
+  //     toast.error('Please fill in all required fields')
+  //     return
+  //   }
 
-    setSaving(true)
+  //   setSaving(true)
     
-    try {
-      // Calculate new word count
-      const wordCount = formData.content.trim().split(/\s+/).length
+  //   try {
+  //     // Calculate new word count
+  //     const wordCount = formData.content.trim().split(/\s+/).length
       
-      const { data, error } = await blogService.updateBlog(blog.id, {
-        title: formData.title,
-        content: formData.content,
-        status: formData.status,
-        word_count: wordCount
-      })
+  //     const { data, error } = await blogService.updateBlog(blog.id, {
+  //       title: formData.title,
+  //       content: formData.content,
+  //       status: formData.status,
+  //       word_count: wordCount
+  //     })
       
-      if (data && !error) {
-        setBlog(data)
-        toast.success('Blog updated successfully')
-        router.push(`/dashboard/blogs/${blog.id}`)
-      } else {
-        toast.error('Error updating blog')
-      }
-    } catch (error) {
-      console.error('Error updating blog:', error)
-      toast.error('Error updating blog')
-    } finally {
-      setSaving(false)
-    }
+  //     if (data && !error) {
+  //       setBlog(data)
+  //       toast.success('Blog updated successfully')
+  //       router.push(`/dashboard/blogs/${blog.id}`)
+  //     } else {
+  //       toast.error('Error updating blog')
+  //     }
+  //   } catch (error) {
+  //     console.error('Error updating blog:', error)
+  //     toast.error('Error updating blog')
+  //   } finally {
+  //     setSaving(false)
+  //   }
+  // }
+
+  const handleSave = async (e: React.FormEvent) => {
+  e.preventDefault()
+
+  if (!user?.id || !blog) return
+
+  if (!formData.title.trim() || !formData.content.trim()) {
+    toast.error('Please fill in all required fields')
+    return
   }
+
+  setSaving(true)
+
+  try {
+    const wordCount = formData.content.trim().split(/\s+/).length
+
+    const updatedBlog = await blogService.updateBlog(blog.id, {
+      title: formData.title,
+      content: formData.content,
+      status: formData.status,
+      word_count: wordCount
+    })
+
+    setBlog(updatedBlog)
+    toast.success('Blog updated successfully')
+    router.push(`/dashboard/blogs/${blogId}`)
+  } catch (error) {
+    console.error('Error updating blog:', error)
+    toast.error('Error updating blog')
+  } finally {
+    setSaving(false)
+  }
+}
+
 
   if (loading) {
     return (

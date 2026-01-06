@@ -66,11 +66,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     try {
       await logout();
       console.log("Logout success, redirecting...");
-      router.replace('/auth'); // Redirect after successful logout
+      router.replace('/'); // Redirect after successful logout
       
     } catch (err) {
      toast.error('Error logging out');
-     router.replace('/auth'); // Fallback
+     router.replace('/'); // Fallback
     }
   }
   
