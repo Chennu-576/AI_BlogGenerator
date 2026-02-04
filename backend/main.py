@@ -1089,6 +1089,7 @@ def safe_iteration_handler(func: Callable) -> Callable:
 
 
 # --- Template & system messages ---
+
 TEMPLATE_PROMPT = """
 You are an experienced marketing writer who has worked on real campaigns in {topic}.
 Your job is to write a blog post that feels genuinely human — conversational, emotionally real, and SEO-optimized.
@@ -1154,6 +1155,29 @@ Final thoughts (80–100 words), summarizing key takeaways and tying back to {to
 Use bullet points or numbered lists where helpful.
 CTA (2–3 lines with own heading)
 
+
+SECTION-SPECIFIC FORMATTING
+- Introduction: exactly 2 short paragraphs, no bullets.
+- What is {topic}?: 2 short paragraphs + 1 bullet list (3–5 bullets).
+- Why it matters: 1 problem paragraph + bullets for benefits.
+- How it works: must be a numbered list (4–6 steps).
+- Case studies: 1 setup paragraph + bullet-point results.
+- Best practices: bullets only, no long prose.
+- Tools: one-line description per tool.
+- FAQs: each answer max 3 lines.
+- Final thoughts: max 2 short paragraphs.
+
+
+PARAGRAPH & FORMAT RULES (STRICT)
+- No paragraph may exceed 4 sentences.
+- Each paragraph must focus on one idea only.
+- Break paragraphs immediately after a complete thought.
+- Never write more than 80–90 words without a paragraph break.
+- If a section exceeds 120 words, include at least one bullet or numbered list.
+- Use bullets for steps, benefits, tools, examples, and takeaways.
+- Bullets should be short, conversational, and human — not textbook-style.
+- Visually long paragraphs must be split, even if the idea flows.
+
 SEO & READABILITY
 Maintain keyword density around 1%–1.5%, naturally using LSI/related keywords.
 Write at Grade 8–9 readability.
@@ -1162,6 +1186,7 @@ Ensure factual accuracy and topical authority.
 Keep sentence variation natural to boost AI detection human score.
 Avoid keyword stuffing or robotic phrasing.
 Naturally integrate all user-provided keywords (entered in the Keywords field) into the blog content—including title, headings, and body—to maximize SEO score for every keyword.
+
 
 
 SEO MANDATORY (8 rules - FAIL = regenerate):
@@ -1181,6 +1206,7 @@ Add micro-stories or mini anecdotes to sound real.
 Use natural imperfections and rhythm variations.
 Avoid mirrored phrasing or repetitive line patterns.
 Prioritize flow and emotion over perfect grammar — write like a real person.
+
 
 OUTPUT RULES
 Target approximately {word_count} words exactly.
@@ -1419,6 +1445,169 @@ def calculate_seo_score(title, content, keywords):
     
     return min(round(score, 1), 10.0)
 
+
+def calculate_seo_score(title, content, keywords):
+    score = 0.0
+    max_score = 10.0
+    
+    safe_keywords = safe_ensure_list(keywords)
+    if not safe_keywords:
+        return 5.0  # Baseline for no keywords
+    
+    main_kw = str(safe_keywords[0]).lower().strip()
+    content_lower = content.lower()
+    title_lower = title.lower()
+    
+    # Clean content for accurate word count
+    clean_content = re.sub(r'```.*?```', '', content, flags=re.DOTALL)
+    clean_content = re.sub(r'`[^`]*`', '', clean_content)
+    clean_content = re.sub(r'[#*_\-\[\]!`]', '', clean_content)
+    word_count = len(clean_content.split())
+    
+    # 1. TITLE OPTIMIZATION (2.5 points total)
+    title_len = len(title)
+    
+    # Title length (1 point)
+    if 50 <= title_len <= 60:
+        score += 1.0
+    elif 40 <= title_len <= 70:
+        score += 0.8
+    elif 30 <= title_len <= 80:
+        score += 0.5
+    
+    # Title keyword (1 point)
+    if main_kw in title_lower:
+        score += 1.0
+    elif any(kw in title_lower for kw in safe_keywords if len(str(kw)) > 2):
+        score += 0.5
+    
+    # Title starts with keyword (0.5 point bonus)
+    if title_lower.startswith(main_kw):
+        score += 0.5
+    
+    # 2. CONTENT LENGTH (2 points total) - MORE FLEXIBLE!
+    if word_count >= 1200:
+        score += 2.0
+    elif word_count >= 1000:
+        score += 1.8
+    elif word_count >= 800:
+        score += 1.5
+    elif word_count >= 600:
+        score += 1.0
+    elif word_count >= 400:
+        score += 0.5
+    
+    # 3. HEADING STRUCTURE (2.5 points total) - FIXED COUNTING!
+    # Proper heading count with regex
+    h1_count = len(re.findall(r'^#\s+', content, re.MULTILINE))
+    h2_count = len(re.findall(r'^##\s+', content, re.MULTILINE))
+    h3_count = len(re.findall(r'^###\s+', content, re.MULTILINE))
+    
+    # H1 check (1 point)
+    if h1_count == 1:
+        score += 1.0
+    elif h1_count > 1:
+        score += 0.5  # Multiple H1s is bad but better than none
+    
+    # H2 check (1 point)
+    if h2_count >= 2:
+        score += 1.0
+    elif h2_count == 1:
+        score += 0.5
+    
+    # Keyword in headings (0.5 point bonus)
+    all_headings = re.findall(r'^#{1,3}\s+(.+)$', content, re.MULTILINE)
+    headings_text = " ".join(all_headings).lower()
+    if any(kw.lower() in headings_text for kw in safe_keywords if len(str(kw)) > 2):
+        score += 0.5
+    
+    # 4. KEYWORD OPTIMIZATION (3 points total)
+    # Count keyword occurrences (whole word only)
+    kw_pattern = re.compile(r'\b' + re.escape(main_kw) + r'\b', re.IGNORECASE)
+    kw_count = len(kw_pattern.findall(content_lower))
+    
+    if word_count > 0:
+        density = (kw_count / word_count) * 100
+        
+        # Density scoring (2 points)
+        if 0.8 <= density <= 2.5:
+            score += 2.0
+        elif 0.5 <= density < 0.8 or 2.5 < density <= 3.5:
+            score += 1.0
+        elif density > 0:
+            score += 0.5
+        
+        # Keyword position bonus (1 point)
+        # Check if keyword in first paragraph
+        paragraphs = [p.strip() for p in content.split('\n\n') if p.strip()]
+        if paragraphs and main_kw in paragraphs[0].lower():
+            score += 0.5
+        
+        # Check if keyword in last paragraph
+        if paragraphs and len(paragraphs) > 1 and main_kw in paragraphs[-1].lower():
+            score += 0.5
+    
+    # 5. CONTENT QUALITY (2 points total)
+    # Paragraph count
+    paragraphs = [p for p in content.split('\n\n') if p.strip()]
+    if len(paragraphs) >= 5:
+        score += 0.5
+    if len(paragraphs) >= 8:
+        score += 0.5
+    
+    # Lists
+    list_items = len(re.findall(r'^[\s]*[-*+]\s+', content, re.MULTILINE))
+    if list_items >= 2:
+        score += 0.5
+    
+    # Images
+    if re.search(r'!\[.*?\]\(.*?\)', content):
+        score += 0.5
+    
+    # Links
+    if re.search(r'\[.*?\]\(https?://|https?://\S+', content):
+        score += 0.5
+    
+    # Ensure score is between 0-10
+    final_score = min(round(score, 1), max_score)
+    
+    # If score is too low (below 6), add some baseline
+    if final_score < 6.0:
+        # Give baseline points for having content
+        baseline = min(6.0, 1.0 + (word_count / 1000))
+        final_score = max(final_score, baseline)
+    
+    return final_score
+
+def generate_meta_description(content, max_length=160):
+    """Generate SEO-friendly meta description."""
+    # Clean markdown
+    clean_content = re.sub(r'[#*`_\-\[\]]', '', content)
+    
+    # Get first meaningful paragraph
+    paragraphs = [p.strip() for p in clean_content.split('\n\n') if p.strip()]
+    if not paragraphs:
+        return ""
+    
+    first_para = paragraphs[0]
+    
+    # If already short enough
+    if len(first_para) <= max_length:
+        return first_para
+    
+    # Smart truncation at sentence or word boundary
+    truncated = first_para[:max_length]
+    last_space = truncated.rfind(' ')
+    last_period = truncated.rfind('.')
+    
+    # Prefer to cut at sentence end
+    if last_period > max_length * 0.6:  # If period in last 40%
+        return truncated[:last_period + 1]
+    # Otherwise cut at word boundary
+    elif last_space > max_length * 0.7:
+        return truncated[:last_space].strip() + '...'
+    
+    return truncated.strip() + '...'
 
 
 # --- Endpoints ---
